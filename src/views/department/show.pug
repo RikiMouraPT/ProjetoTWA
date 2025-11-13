@@ -1,0 +1,21 @@
+extends ../layouts/app
+
+block content
+  h1 Detalhe do Departamento
+  
+  div
+    p
+      strong ID: 
+      | #{department.id}
+    p
+      strong Nome: 
+      | #{department.name}
+    p
+      strong ID do Gerente: 
+      | #{department.manager_id}
+    p
+      strong Criado em: 
+      | #{department.created_at}
+
+  hr
+  a(href="/departments") « Voltar à lista

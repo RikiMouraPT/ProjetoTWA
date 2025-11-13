@@ -1,0 +1,30 @@
+extends ../layouts/app
+
+block content
+  h1 Lista de Utilizadores
+  p: a(href="/users/create") + Novo Utilizador
+
+  if users.length
+    table(border="1")
+      thead
+        tr
+          th ID
+          th Nome
+          th Email
+          th Cargo
+          th Dept. ID
+          th Ações
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td= user.name
+            td= user.email
+            td= user.role
+            td= user.department_id
+            td
+              a(href=`/users/${user.id}`) Ver
+              |  | 
+              a(href=`/users/${user.id}/edit`) Editar
+  else
+    p Não há utilizadores registados.

@@ -1,0 +1,13 @@
+extends ../layouts/app
+
+block content
+  h1 Detalhe: #{user.name}
+  p Email: #{user.email}
+  p Cargo: #{user.role}
+  p Departamento ID: #{user.department_id}
+  
+  hr
+  a(href=`/users/${user.id}/edit`) Editar
+  | 
+  form(action=`/users/${user.id}?_method=DELETE` method="POST" style="display:inline")
+    button(type="submit" class="btn-danger") Apagar

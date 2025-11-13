@@ -1,0 +1,19 @@
+extends ../layouts/app
+
+block content
+  h1 Editar Pedido ##{vacation.id}
+  form(action=`/vacations/${vacation.id}?_method=PUT` method="POST")
+    div
+      label Tipo (ID): 
+      input(type="number" name="leave_type_id" value=vacation.leave_type_id required)
+    div
+      label Início: 
+      //- Truque para formatar a data para o input type="date" aceitar (YYYY-MM-DD)
+      - var start = vacation.start_date ? new Date(vacation.start_date).toISOString().split('T')[0] : ''
+      input(type="date" name="start_date" value=start required)
+    div
+      label Fim: 
+      - var end = vacation.end_date ? new Date(vacation.end_date).toISOString().split('T')[0] : ''
+      input(type="date" name="end_date" value=end required)
+    br
+    button(type="submit") Atualizar

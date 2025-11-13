@@ -1,0 +1,12 @@
+extends ../layouts/app
+
+block content
+  h1 Tipos de Férias
+  p: a(href="/leave-types/create") + Novo Tipo
+
+  ul
+    each type in leaveTypes
+      li
+        strong= type.name
+        |  (Máx: #{type.max_days} dias) 
+        a(href=`/leave-types/${type.id}/edit`) [Editar]

@@ -1,0 +1,20 @@
+extends ../layouts/app
+
+block content
+  h1 Detalhe: #{leaveType.name}
+  
+  p
+    strong Nome:
+    | #{leaveType.name}
+  p
+    strong Descrição:
+    | #{leaveType.description}
+  p
+    strong Máximo de Dias:
+    | #{leaveType.max_days}
+  
+  hr
+  a(href=`/leave-types/${leaveType.id}/edit`) Editar
+  | 
+  form(action=`/leave-types/${leaveType.id}?_method=DELETE` method="POST" style="display:inline")
+    button(type="submit" class="btn-danger") Apagar

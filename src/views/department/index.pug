@@ -1,0 +1,17 @@
+extends ../layouts/app
+
+block content
+  h1 Lista de Departamentos
+
+  p
+    a(href="/departments/create") + Criar Novo Departamento
+
+  if departments.length > 0
+    ul
+      each dept in departments
+        li
+          // Link para a página de detalhe (show)
+          a(href=`/departments/${dept.id}`) #{dept.name} 
+          |  (Gerente ID: #{dept.manager_id})
+  else
+    p Não há departamentos registados.

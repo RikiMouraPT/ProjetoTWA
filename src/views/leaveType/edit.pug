@@ -1,0 +1,16 @@
+extends ../layouts/app
+
+block content
+  h1 Editar: #{leaveType.name}
+  form(action=`/leave-types/${leaveType.id}?_method=PUT` method="POST")
+    div
+      label Nome: 
+      input(type="text" name="name" value=leaveType.name required)
+    div
+      label Descrição: 
+      textarea(name="description")= leaveType.description
+    div
+      label Máx Dias: 
+      input(type="number" name="max_days" value=leaveType.max_days required)
+    br
+    button(type="submit") Atualizar

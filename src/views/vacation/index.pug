@@ -1,0 +1,34 @@
+extends ../layouts/app
+
+block content
+  h1 Pedidos de Férias
+  p: a(href="/vacations/create") + Novo Pedido
+
+  if vacations.length
+    table
+      thead
+        tr
+          th ID
+          th User
+          th Tipo
+          th Início
+          th Fim
+          th Estado
+          th Ações
+      tbody
+        each v in vacations
+          tr
+            td= v.id
+            td= v.user_id
+            td= v.leave_type_id
+            //- Formata a data apenas para visualização
+            td= new Date(v.start_date).toLocaleDateString()
+            td= new Date(v.end_date).toLocaleDateString()
+            td= v.status
+            td
+              a(href=`/vacations/${v.id}/edit`) Editar
+              | 
+              form(action=`/vacations/${v.id}?_method=DELETE` method="POST" style="display:inline")
+                 button(type="submit") X
+  else
+    p Sem pedidos.
