@@ -4,7 +4,7 @@ function index(req, res) {
     const sql = 'SELECT * FROM vacations';
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.render('vacation/index', { 
                 vacations: results 
@@ -15,10 +15,11 @@ function index(req, res) {
 
 function indexByUser(req, res) {
     const userId = req.params.userId;
+
     const sql = `SELECT * FROM vacations WHERE user_id = ${userId}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.render('vacation/index', { 
                 vacations: results 
@@ -27,21 +28,21 @@ function indexByUser(req, res) {
     });
 }
 
-function create (req, res) {
-    res.render('vacations/create');
+function create(req, res) {
+    res.render('vacation/create');
 }
 
 function store(req, res) {
     const { user_id, start_date, end_date, leave_type_id } = req.body;
     if (!user_id || !start_date || !end_date || !leave_type_id) {
-        res.status(400).json({ error: 'User ID, start date, end date, and leave type are required' });
+        res.status(400).send({ error: 'Dia de início, dia de término, tipo de férias são obrigatórios' });
         return;
     }
 
     const sql = `INSERT INTO vacations (user_id, start_date, end_date, leave_type_id, created_at) VALUES (${user_id}, '${start_date}', '${end_date}', ${leave_type_id}, NOW())`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/vacations');
         }
@@ -50,12 +51,13 @@ function store(req, res) {
 
 function show(req, res) {
     const id = req.params.id;
+
     const sql = `SELECT * FROM vacations WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else if (results.length === 0) {
-            res.status(404).json({ error: 'Vacation not found' });
+            res.status(404).send({ error: 'Férias não encontrada' });
         } else {
             res.render('vacation/show', { 
                 vacation: results[0] 
@@ -64,12 +66,49 @@ function show(req, res) {
     });
 }
 
+function edit(req, res) {
+    const id = req.params.id;
+
+    const sql = `SELECT * FROM vacations WHERE id = ${id}`;
+    executeSQL(sql, (error, results) => {
+        if (error) {
+            res.status(500).send(error.message);
+        } else if (results.length === 0) {
+            res.status(404).send({ error: 'Férias não encontrada' });
+        } else {
+            res.render('vacation/edit', { 
+                vacation: results[0] 
+            });
+        }
+    });
+}
+
+function update(req, res) {
+    const id = req.params.id;
+    const { user_id, start_date, end_date, leave_type_id } = req.body;
+
+    if (!user_id || !start_date || !end_date || !leave_type_id) {
+        res.status(400).send({ error: 'Dia de início, dia de término, tipo de férias são obrigatórios' });
+        return;
+    }
+
+    const sql = `UPDATE vacations SET user_id=${user_id}, start_date='${start_date}', end_date='${end_date}', leave_type_id=${leave_type_id} WHERE id = ${id}`;
+    executeSQL(sql, (error, results) => {
+        if (error) {
+            res.status(500).send(error.message);
+        } else {
+            res.redirect('/vacations');
+        }
+    });
+}
+
 function destroy(req, res) {
     const id = req.params.id;
+
     const sql = `DELETE FROM vacations WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/vacations');
         }
@@ -78,10 +117,11 @@ function destroy(req, res) {
 
 function accept(req, res) {
     const id = req.params.id;
+
     const sql = `UPDATE vacations SET status='approved' WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/vacations');
         }
@@ -89,10 +129,11 @@ function accept(req, res) {
 }
 function reject(req, res) {
     const id = req.params.id;
+
     const sql = `UPDATE vacations SET status='rejected' WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/vacations');
         }
@@ -105,6 +146,8 @@ module.exports = {
     create,
     store,
     show,
+    edit,
+    update,
     destroy,
     accept,
     reject,

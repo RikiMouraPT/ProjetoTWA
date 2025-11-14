@@ -4,7 +4,7 @@ function index(req, res) {
     const sql = 'SELECT id, name, email, role, department_id FROM users';
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.render('user/index', { 
                 users: results 
@@ -30,7 +30,7 @@ function store(req, res) {
 
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send('Erro na base de dados: ' + error.message);
+            res.status(500).send(error.message);
         } else {
             res.redirect('/users');
         }
@@ -43,7 +43,7 @@ function show(req, res) {
 
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send({ error: error.message });
+            res.status(500).send(error.message);
         } else if (results.length === 0) {
             res.status(404).send({ error: 'User not found' });
         }
@@ -60,7 +60,7 @@ function edit(req, res) {
     const sql = `SELECT id, name, email, role, department_id FROM users WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else if (results.length === 0) {
             res.status(404).send({ error: 'User not found' });
         }
@@ -76,17 +76,34 @@ function update(req, res) {
     const id = req.params.id;
     const { name, email, password, role, department_id } = req.body;
 
-    if (!name || !email || !password || !role) {
-        res.status(400).send({ error: 'Nome, email, password e role são obrigatórios' });
+    if (!name || !email || !role) {
+        res.status(400).send({ error: 'Nome, email e role são obrigatórios' });
         return;
     }
-    
+
     const deptIdValue = department_id ? department_id : 'NULL';
 
-    const sql = `UPDATE users SET name='${name}', email='${email}', password='${password}', role='${role}', department_id=${deptIdValue} WHERE id = ${id}`;
+    var sql;
+    if (password && password.trim() !== '') {
+        sql = `UPDATE users 
+               SET name='${name}',
+                   email='${email}',
+                   password='${password}',
+                   role='${role}',
+                   department_id=${deptIdValue}
+               WHERE id = ${id}`
+    } else {
+        sql = `UPDATE users 
+               SET name='${name}',
+                   email='${email}',
+                   role='${role}',
+                   department_id=${deptIdValue}
+               WHERE id = ${id}`;
+    }
+
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/users');
         }
@@ -95,10 +112,11 @@ function update(req, res) {
 
 function destroy(req, res) {
     const id = req.params.id;
+
     const sql = `DELETE FROM users WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/users');
         }

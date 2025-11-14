@@ -5,7 +5,7 @@ function index(req, res) {
 
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.render('leaveType/index', { 
                 leaveTypes: results 
@@ -20,15 +20,18 @@ function create (req, res) {
 
 function store(req, res) {
     const { name, description, max_days } = req.body;
-    if (!name || !description || !max_days) {
-        res.status(400).json({ error: 'Name, description, and max_days are required' });
+    if (!name) {
+        res.status(400).send({ error: 'Nome é obrigatório' });
         return;
     }
+    
+    const descriptionValue = description ? description : '';
+    const maxDaysValue = max_days ? max_days : 'NULL';
 
-    const sql = `INSERT INTO leave_types (name, description, max_days, created_at) VALUES ('${name}', '${description}', ${max_days}, NOW())`;
+    const sql = `INSERT INTO leave_types (name, description, max_days, created_at) VALUES ('${name}', '${descriptionValue}', ${maxDaysValue}, NOW())`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/leave-types');
         }
@@ -40,9 +43,9 @@ function show(req, res) {
     const sql = `SELECT * FROM leave_types WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else if (results.length === 0) {
-            res.status(404).json({ error: 'Leave type not found' });
+            res.status(404).send({ error: 'Tipo de Férias não encontrado' });
         } else {
             res.render('leaveType/show', { 
                 leaveType: results[0] 
@@ -56,9 +59,9 @@ function edit (req, res) {
     const sql = `SELECT * FROM leave_types WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else if (results.length === 0) {
-            res.status(404).json({ error: 'Leave type not found' });
+            res.status(404).send({ error: 'Tipo de Férias não encontrado' });
         }
         else {
             res.render('leaveType/edit', { 
@@ -71,15 +74,18 @@ function edit (req, res) {
 function update(req, res) {
     const id = req.params.id;
     const { name, description, max_days } = req.body;
-    if (!name || !description || !max_days) {
-        res.status(400).json({ error: 'Name, description, and max_days are required' });
+    if (!name) {
+        res.status(400).send({ error: 'Nome é obrigatório' });
         return;
     }
 
-    const sql = `UPDATE leave_types SET name='${name}', description='${description}', max_days=${max_days} WHERE id = ${id}`;
+    const descriptionValue = description ? description : '';
+    const maxDaysValue = max_days ? max_days : 'NULL';
+
+    const sql = `UPDATE leave_types SET name='${name}', description='${descriptionValue}', max_days=${maxDaysValue} WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/leave-types');
         }
@@ -91,7 +97,7 @@ function destroy(req, res) {
     const sql = `DELETE FROM leave_types WHERE id = ${id}`;
     executeSQL(sql, (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Database query error' });
+            res.status(500).send(error.message);
         } else {
             res.redirect('/leave-types');
         }
