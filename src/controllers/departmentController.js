@@ -3,14 +3,14 @@ const { executeSQL } = require('../migrations/00-connection');
 function index(req, res) {
     const sql = 'SELECT * FROM departments';
 
-    res.render('department/index', { 
-        departments: [
-            {
-                "id": 1,
-                "name": "Recursos Humanos",
-                "manager_id": 2
-            }
-        ]
+    executeSQL(sql, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Database query error' });
+        } else {
+            res.render('department/index', { 
+                departments: results 
+            });
+        }
     });
 }
 

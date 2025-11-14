@@ -2,6 +2,7 @@ const { executeSQL } = require('../migrations/00-connection');
 
 function index(req, res) {
     const sql = 'SELECT * FROM leave_types';
+
     executeSQL(sql, (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
@@ -29,7 +30,7 @@ function store(req, res) {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
         } else {
-            res.redirect('/leaveTypes');
+            res.redirect('/leave-types');
         }
     });
 }   
@@ -80,7 +81,7 @@ function update(req, res) {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
         } else {
-            res.redirect('/leaveTypes');
+            res.redirect('/leave-types');
         }
     });
 }
@@ -92,7 +93,7 @@ function destroy(req, res) {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
         } else {
-            res.redirect('/leaveTypes');
+            res.redirect('/leave-types');
         }
     });
 }

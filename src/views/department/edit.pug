@@ -2,12 +2,16 @@ extends ../layouts/app
 
 block content
   h1 Editar #{department.name}
-  form(action=`/departments/${department.id}?_method=PUT` method="POST")
+  
+  form(action=`/departments/${department.id}?_method=PUT` method=`POST`)
     div
       label Nome: 
-      input(type="text" name="name" value=department.name required)
+      input(type=`text` name=`name` value=department.name required)
     div
       label ID Gerente: 
-      input(type="number" name="manager_id" value=department.manager_id)
-    br
-    button(type="submit") Atualizar
+      input(type=`number` name=`manager_id` value=department.manager_id)
+    
+    hr 
+    a(href=`/departments`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
+    |
+    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter

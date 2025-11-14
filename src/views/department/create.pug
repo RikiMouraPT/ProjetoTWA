@@ -1,17 +1,18 @@
 extends ../layouts/app
 
-
 block content
   h1 Novo Departamento
 
-  form(action="/departments" method="POST")
+  form(action=`/departments` method=`POST`)
     div
-      label(for="name") Nome do Departamento: 
-      input(type="text" name="name" id="name" required)
+      label(for=`name`) Nome do Departamento: 
+      input(type=`text` name=`name` id=`name` required)
     
     div
-      label(for="manager_id") ID do Gerente: 
-      input(type="number" name="manager_id" id="manager_id" required)
+      label(for=`manager_id`) ID do Gerente: 
+      input(type=`number` name=`manager_id` id=`manager_id` required)
 
-    br
-    button(type="submit") Criar Departamento
+    hr 
+    a(href=`/departments`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
+    |
+    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Departamento

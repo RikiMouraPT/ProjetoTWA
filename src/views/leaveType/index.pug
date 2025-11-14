@@ -2,11 +2,31 @@ extends ../layouts/app
 
 block content
   h1 Tipos de Férias
-  p: a(href="/leave-types/create") + Novo Tipo
 
-  ul
-    each type in leaveTypes
-      li
-        strong= type.name
-        |  (Máx: #{type.max_days} dias) 
-        a(href=`/leave-types/${type.id}/edit`) [Editar]
+  p
+    a(href=`/leave-types/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Tipo
+
+  if leaveTypes.length
+    table(border=`1`, style=`text-align: center; justify-content: center;`)
+      thead
+        tr
+          th ID
+          th Nome
+          th Descrição
+          th Max. Dias
+          th Ações
+      tbody
+        each leaveType in leaveTypes
+          tr
+            td= leaveType.id
+            td= leaveType.name
+            td= leaveType.description
+            td= leaveType.max_days
+            td
+              a(href=`/leave-types/${leaveType.id}`, style=`text-decoration: none;`) 👁
+              |  | 
+              a(href=`/leave-types/${leaveType.id}/edit`, style=`text-decoration: none;`) ✎
+              |  | 
+              a(href=`/leave-types/${leaveType.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este tipo de férias?');`, style=`text-decoration: none;`) ✖
+  else
+    p Não há tipos de férias registados.

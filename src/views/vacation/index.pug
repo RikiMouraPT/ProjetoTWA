@@ -2,10 +2,12 @@ extends ../layouts/app
 
 block content
   h1 Pedidos de Férias
-  p: a(href="/vacations/create") + Novo Pedido
+  
+  p 
+    a(href=`/vacations/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Pedido
 
   if vacations.length
-    table
+    table(border=`1`, style=`text-align: center; justify-content: center;`)
       thead
         tr
           th ID
@@ -16,19 +18,19 @@ block content
           th Estado
           th Ações
       tbody
-        each v in vacations
+        each vacation in vacations
           tr
-            td= v.id
-            td= v.user_id
-            td= v.leave_type_id
-            //- Formata a data apenas para visualização
-            td= new Date(v.start_date).toLocaleDateString()
-            td= new Date(v.end_date).toLocaleDateString()
-            td= v.status
+            td= vacation.id
+            td= vacation.user_id
+            td= vacation.leave_type_id
+            td= new Date(vacation.start_date).toLocaleDateString()
+            td= new Date(vacation.end_date).toLocaleDateString()
+            td= vacation.status
             td
-              a(href=`/vacations/${v.id}/edit`) Editar
-              | 
-              form(action=`/vacations/${v.id}?_method=DELETE` method="POST" style="display:inline")
-                 button(type="submit") X
+              a(href=`/users/${vacation.user_id}`, style=`text-decoration: none;`) 👁
+              |  | 
+              a(href=`/users/${vacation.user_id}/edit`, style=`text-decoration: none;`) ✎
+              |  | 
+              a(href=`/users/${vacation.user_id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este utilizador?');`, style=`text-decoration: none;`) ✖
   else
     p Sem pedidos.

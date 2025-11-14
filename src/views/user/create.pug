@@ -2,23 +2,27 @@ extends ../layouts/app
 
 block content
   h1 Novo Utilizador
-  form(action="/users" method="POST")
+  
+  form(action=`/users` method=`POST`)
     div
-      label(for="name") Nome:
-      input(type="text" name="name" required)
+      label(for=`name`) Nome:
+      input(type=`text` name=`name` required)
     div
-      label(for="email") Email:
-      input(type="email" name="email" required)
+      label(for=`email`) Email:
+      input(type=`email` name=`email` required)
     div
-      label(for="password") Password:
-      input(type="password" name="password" required)
+      label(for=`password`) Password:
+      input(type=`password` name=`password` required)
     div
-      label(for="role") Cargo:
-      select(name="role")
-        option(value="employee") Employee
-        option(value="manager") Manager
+      label(for=`role`) Cargo:
+      select(name=`role`)
+        option(value=`employee`) Employee
+        option(value=`manager`) Manager
     div
-      label(for="department_id") ID Departamento:
-      input(type="number" name="department_id")
-    br
-    button(type="submit") Criar
+      label(for=`department_id`) ID Departamento:
+      input(type=`number` name=`department_id`)
+
+    hr 
+    a(href=`/users`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
+    |
+    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Utilizador

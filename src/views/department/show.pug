@@ -1,21 +1,21 @@
 extends ../layouts/app
 
 block content
-  h1 Detalhe do Departamento
+  h1 Detalhe do Departamento de/a #{department.name}
   
-  div
-    p
-      strong ID: 
-      | #{department.id}
-    p
-      strong Nome: 
-      | #{department.name}
-    p
-      strong ID do Gerente: 
-      | #{department.manager_id}
-    p
-      strong Criado em: 
-      | #{department.created_at}
+  table(border=`1`, style=`text-align: center; justify-content: center;`)
+    thead
+      tr
+        th ID
+        th Nome
+        th Manager ID
+    tbody
+      tr
+        td= department.id
+        td= department.name
+        td= department.manager_id
 
   hr
-  a(href="/departments") « Voltar à lista
+  a(href=`/departments`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
+  | 
+  a(href=`/departments/${department.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar

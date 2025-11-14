@@ -2,19 +2,21 @@ extends ../layouts/app
 
 block content
   h1 Detalhe: #{leaveType.name}
-  
-  p
-    strong Nome:
-    | #{leaveType.name}
-  p
-    strong Descrição:
-    | #{leaveType.description}
-  p
-    strong Máximo de Dias:
-    | #{leaveType.max_days}
-  
+
+  table(border=`1`, style=`text-align: center; justify-content: center;`)
+    thead 
+      tr
+        th ID
+        th Nome
+        th Descrição
+        th Máx Dias
+    tbody
+      tr
+        td= leaveType.id
+        td= leaveType.name
+        td= leaveType.description
+        td= leaveType.max_days
   hr
-  a(href=`/leave-types/${leaveType.id}/edit`) Editar
+  a(href=`/leave-types`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   | 
-  form(action=`/leave-types/${leaveType.id}?_method=DELETE` method="POST" style="display:inline")
-    button(type="submit" class="btn-danger") Apagar
+  a(href=`/leave-types/${leaveType.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar

@@ -2,12 +2,24 @@ extends ../layouts/app
 
 block content
   h1 Detalhe: #{user.name}
-  p Email: #{user.email}
-  p Cargo: #{user.role}
-  p Departamento ID: #{user.department_id}
+  
+  table(border=`1`, style=`text-align: center; justify-content: center;`)
+    thead
+      tr
+        th ID
+        th Nome
+        th Email
+        th Role
+        th Department ID
+    tbody
+      tr
+        td= user.id
+        td= user.name
+        td= user.email
+        td= user.role
+        td= user.department_id
   
   hr
-  a(href=`/users/${user.id}/edit`) Editar
+  a(href=`/users`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   | 
-  form(action=`/users/${user.id}?_method=DELETE` method="POST" style="display:inline")
-    button(type="submit" class="btn-danger") Apagar
+  a(href=`/users/${user.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar

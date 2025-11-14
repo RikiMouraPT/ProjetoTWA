@@ -1,37 +1,29 @@
 extends ../layouts/app
 
 block content
-  h1 Pedido de Férias ##{vacation.id}
-
-  p
-    strong Utilizador (ID):
-    | #{vacation.user_id}
-  p
-    strong Tipo (ID):
-    | #{vacation.leave_type_id}
-  p
-    strong Data Início:
-    | #{new Date(vacation.start_date).toLocaleDateString()}
-  p
-    strong Data Fim:
-    | #{new Date(vacation.end_date).toLocaleDateString()}
-  p
-    strong Estado:
-    | #{vacation.status}
-    
+  h1 Detalhe Férias - #{vacation.id}
+  
+  table(border=`1`, style=`text-align: center; justify-content: center;`)
+    thead
+      tr
+        th ID
+        th User ID
+        th Tipo de Férias
+        th Início
+        th Fim
+        th Estado
+    tbody
+      tr
+        td= vacation.id
+        td= vacation.user_id
+        td= vacation.leave_type_id
+        td= new Date(vacation.start_date).toLocaleDateString()
+        td= new Date(vacation.end_date).toLocaleDateString()
+        td= vacation.status
+  
   hr
-  
-  h3 Ações (Manager)
-  form(action=`/vacations/${vacation.id}/accept` method="POST" style="display:inline")
-    button(type="submit") Aprovar
-  
-  form(action=`/vacations/${vacation.id}/reject` method="POST" style="display:inline")
-    button(type="submit") Rejeitar
-
-  hr
-  
-  h3 Ações (Utilizador)
-  a(href=`/vacations/${vacation.id}/edit`) Editar Pedido
+  a(href=`/vacations`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   | 
-  form(action=`/vacations/${vacation.id}?_method=DELETE` method="POST" style="display:inline")
-    button(type="submit" class="btn-danger") Apagar/Cancelar Pedido
+  a(href=`/vacations/${vacation.id}/accept`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✔ Aceitar
+  | 
+  a(href=`/vacations/${vacation.id}/reject`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✘ Rejeitar

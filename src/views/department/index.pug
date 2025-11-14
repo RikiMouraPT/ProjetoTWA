@@ -3,15 +3,28 @@ extends ../layouts/app
 block content
   h1 Lista de Departamentos
 
-  p
-    a(href="/departments/create") + Criar Novo Departamento
+  p 
+    a(href=`/departments/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Departamento
 
-  if departments.length > 0
-    ul
-      each dept in departments
-        li
-          // Link para a página de detalhe (show)
-          a(href=`/departments/${dept.id}`) #{dept.name} 
-          |  (Gerente ID: #{dept.manager_id})
+  if departments.length
+    table(border=`1`, style=`text-align: center; justify-content: center;`)
+      thead
+        tr
+          th ID
+          th Nome
+          th Manager ID
+          th Ações
+      tbody
+        each department in departments
+          tr
+            td= department.id
+            td= department.name
+            td= department.manager_id
+            td
+              a(href=`/departments/${department.id}`, style=`text-decoration: none;`) 👁
+              |  | 
+              a(href=`/departments/${department.id}/edit`, style=`text-decoration: none;`) ✎
+              |  | 
+              a(href=`/departments/${department.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este departamento?');`, style=`text-decoration: none;`) ✖
   else
     p Não há departamentos registados.

@@ -2,10 +2,12 @@ extends ../layouts/app
 
 block content
   h1 Lista de Utilizadores
-  p: a(href="/users/create") + Novo Utilizador
+  
+  p
+    a(href=`/users/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Utilizador
 
   if users.length
-    table(border="1")
+    table(border=`1`, style=`text-align: center; justify-content: center;`)
       thead
         tr
           th ID
@@ -23,8 +25,10 @@ block content
             td= user.role
             td= user.department_id
             td
-              a(href=`/users/${user.id}`) Ver
+              a(href=`/users/${user.id}`, style=`text-decoration: none;`) 👁
               |  | 
-              a(href=`/users/${user.id}/edit`) Editar
+              a(href=`/users/${user.id}/edit`, style=`text-decoration: none;`) ✎
+              |  | 
+              a(href=`/users/${user.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este utilizador?');`, style=`text-decoration: none;`) ✖
   else
     p Não há utilizadores registados.

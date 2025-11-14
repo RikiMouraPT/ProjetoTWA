@@ -6,7 +6,7 @@ function index(req, res) {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
         } else {
-            res.render('vacations/index', { 
+            res.render('vacation/index', { 
                 vacations: results 
             });
         }
@@ -20,7 +20,7 @@ function indexByUser(req, res) {
         if (error) {
             res.status(500).json({ error: 'Database query error' });
         } else {
-            res.render('vacations/index', { 
+            res.render('vacation/index', { 
                 vacations: results 
             });
         }
@@ -57,7 +57,7 @@ function show(req, res) {
         } else if (results.length === 0) {
             res.status(404).json({ error: 'Vacation not found' });
         } else {
-            res.render('vacations/show', { 
+            res.render('vacation/show', { 
                 vacation: results[0] 
             });
         }

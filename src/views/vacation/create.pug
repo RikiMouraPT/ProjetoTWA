@@ -1,19 +1,23 @@
 extends ../layouts/app
 
 block content
-  h1 Pedir Férias
-  form(action="/vacations" method="POST")
+  h1 Novo Pedido de Férias
+
+  form(action=`/vacations` method=`POST`)
     div
       label O teu ID: 
-      input(type="number" name="user_id" required)
+      input(type=`number` name=`user_id` required)
     div
       label Tipo de Férias (ID): 
-      input(type="number" name="leave_type_id" required)
+      input(type=`number` name=`leave_type_id` required)
     div
       label Início: 
-      input(type="date" name="start_date" required)
+      input(type=`date` name=`start_date` required)
     div
       label Fim: 
-      input(type="date" name="end_date" required)
-    br
-    button(type="submit") Submeter
+      input(type=`date` name=`end_date` required)
+
+    hr 
+    a(href=`/vacations`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
+    |
+    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Férias

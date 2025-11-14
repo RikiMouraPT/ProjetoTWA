@@ -2,23 +2,27 @@ extends ../layouts/app
 
 block content
   h1 Editar Utilizador: #{user.name}
-  form(action=`/users/${user.id}?_method=PUT` method="POST")
+  
+  form(action=`/users/${user.id}?_method=PUT` method=`POST`)
     div
       label Nome: 
-      input(type="text" name="name" value=user.name required)
+      input(type=`text` name=`name` value=user.name required)
     div
       label Email: 
-      input(type="email" name="email" value=user.email required)
+      input(type=`email` name=`email` value=user.email required)
     div
       label Password: 
-      input(type="password" name="password" placeholder="Nova pass (opcional)")
+      input(type=`password` name=`password` placeholder=`Nova pass (opcional)`)
     div
       label Cargo: 
-      select(name="role")
-        option(value="employee" selected=(user.role == 'employee')) Employee
-        option(value="manager" selected=(user.role == 'manager')) Manager
+      select(name=`role`)
+        option(value=`employee` selected=(user.role == 'employee')) Employee
+        option(value=`manager` selected=(user.role == 'manager')) Manager
     div
       label ID Departamento: 
-      input(type="number" name="department_id" value=user.department_id)
-    br
-    button(type="submit") Atualizar
+      input(type=`number` name=`department_id` value=user.department_id)
+    
+    hr 
+    a(href=`/users`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
+    |
+    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter
