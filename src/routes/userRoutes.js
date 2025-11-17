@@ -1,6 +1,7 @@
 const express = require('express');
 const router =  express.Router();
 const userController = require('../controllers/userController');
+const { isAuthenticated, isManager } = require('../middlewares/auth');
 
 router.get('/', userController.index);
 router.get('/create', userController.create);

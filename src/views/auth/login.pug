@@ -1,0 +1,16 @@
+extends ../layouts/app
+
+block content
+  h1 Login
+  form(action="/login" method="POST")
+    div
+      label(for="email") Email:
+      input(type="email" name="email" required)
+    div
+      label(for="password") Password:
+      input(type="password" name="password" required)
+    br
+    button(type="submit") Entrar
+    
+  p
+    a(href="/register") Não tens conta? Regista-te

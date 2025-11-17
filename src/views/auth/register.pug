@@ -1,0 +1,21 @@
+extends ../layouts/app
+
+block content
+  h1 Registar
+  form(action="/register" method="POST")
+    div
+      label(for="name") Nome:
+      input(type="text" name="name" required)
+    div
+      label(for="email") Email:
+      input(type="email" name="email" required)
+    div
+      label(for="password") Password:
+      input(type="password" name="password" required)
+    div
+      label(for="role") Cargo:
+      select(name="role")
+        option(value="employee") Employee
+        option(value="manager") Manager
+    br
+    button(type="submit") Registar
