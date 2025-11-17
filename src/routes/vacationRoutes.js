@@ -1,14 +1,15 @@
 const express = require('express');
 const router =  express.Router();
 const vacationController = require('../controllers/vacationController');
+const { isAuthenticated, isManager } = require('../middlewares/auth');
 
-router.get('/', vacationController.index);
-router.post('/', vacationController.store);
-router.get('/create', vacationController.create);
-router.get('/:id', vacationController.show);
-router.put('/:id/accept', vacationController.accept);
-router.put('/:id/reject', vacationController.reject);
-router.delete('/:id', vacationController.destroy);
-
+router.get('/', isManager, vacationController.index);
+router.get('/byUser/:userId', isAuthenticated, vacationController.indexByUser);
+router.post('/', isAuthenticated, vacationController.store);
+router.get('/create', isAuthenticated, vacationController.create);
+router.get('/:id', isAuthenticated, vacationController.show);
+router.put('/:id/accept', isManager, vacationController.accept);
+router.put('/:id/reject', isManager, vacationController.reject);
+router.delete('/:id', isAuthenticated, vacationController.destroy);
 
 module.exports = router;

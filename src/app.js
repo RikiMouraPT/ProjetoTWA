@@ -28,10 +28,17 @@ app.use(session({
     cookie: { maxAge: 60*60*1000 } // 1hora --> Tempo de expiração da sessão (em milissegundos)
 }));
 
+// Utilizador fica disponivel em todas as views
+app.use((req, res, next) => {
+    res.locals.currentUser = req.session.user;
+    next();
+});
 
 app.get('/', (req, res) => {
-    res.render('welcome', { title: 'Home' });
+    console.log("Sessão actual:", req.session);
+    res.render('welcome', { title: 'Home'});
 });
+
 app.use('/', authRoutes);
 app.use('/users', userRoutes);
 app.use('/vacations', vacationRoutes);

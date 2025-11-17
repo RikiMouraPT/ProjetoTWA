@@ -3,7 +3,8 @@ html
   head
     title Leavely App
   body
-    nav
+    if currentUser
+      nav
       a(href=`/`) Home 
       | | 
       a(href=`/users`) Utilizadores 
@@ -13,8 +14,21 @@ html
       a(href=`/leave-types`) Tipos de Férias 
       | | 
       a(href=`/vacations`) Pedidos de Férias 
-      | |
-      a(href=`/auth/logout`) Terminar Sessão
-    hr
+      | | 
+      p(style="display:inline") Logged in as #{currentUser.name} (#{currentUser.role}) 
+      | | 
+      a(href=`/logout`) Terminar Sessão 
+      hr
+    else
+      nav
+      a(href=`/`) Home 
+      | | 
+      a(href=`/login`) Iniciar Sessão 
+      | | 
+      a(href=`/register`) Registar 
+      | | 
+      a Não autenticado
+      hr
+    
     
     block content

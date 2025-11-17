@@ -1,13 +1,14 @@
 const express = require('express');
 const router =  express.Router();
 const leaveTypeController = require('../controllers/leaveTypeController');
+const { isManager } = require('../middlewares/auth');
 
-router.get('/', leaveTypeController.index);
-router.post('/', leaveTypeController.store);
-router.get('/create', leaveTypeController.create);
-router.get('/:id', leaveTypeController.show);
-router.get('/:id/edit', leaveTypeController.edit);
-router.put('/:id', leaveTypeController.update);
-router.delete('/:id', leaveTypeController.destroy);
+router.get('/', isManager, leaveTypeController.index);
+router.post('/', isManager, leaveTypeController.store);
+router.get('/create', isManager, leaveTypeController.create);
+router.get('/:id', isManager, leaveTypeController.show);
+router.get('/:id/edit', isManager, leaveTypeController.edit);
+router.put('/:id', isManager, leaveTypeController.update);
+router.delete('/:id', isManager, leaveTypeController.destroy);
 
 module.exports = router;

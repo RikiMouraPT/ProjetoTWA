@@ -16,7 +16,16 @@ function isManager(req, res, next) {
     }
 }
 
+function isGuest(req, res, next) {
+    if (!req.session.user) {
+        next();
+    } else {
+        res.redirect('/');
+    }
+}
+
 module.exports = {
     isAuthenticated,
-    isManager
+    isManager,
+    isGuest
 };
