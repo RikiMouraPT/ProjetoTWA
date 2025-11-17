@@ -3,7 +3,7 @@ html
   head
     title Leavely App
   body
-    if currentUser
+    if currentUser && currentUser.role == "manager"
       nav
       a(href=`/`) Home 
       | | 
@@ -16,6 +16,16 @@ html
       a(href=`/vacations`) Pedidos de Férias 
       | | 
       p(style="display:inline") Logged in as #{currentUser.name} (#{currentUser.role}) 
+      | | 
+      a(href=`/logout`) Terminar Sessão 
+      hr
+    else if currentUser && currentUser.role == "employee"
+      nav
+      a(href=`/`) Home 
+      | | 
+      a(href=`/vacations/byUser/${currentUser.id}`) Meus Pedidos de Férias 
+      | | 
+      p(style="display:inline") Logged in as #[a(href=`/users/${currentUser.id}/edit`) #{currentUser.name}] (#{currentUser.role}) 
       | | 
       a(href=`/logout`) Terminar Sessão 
       hr

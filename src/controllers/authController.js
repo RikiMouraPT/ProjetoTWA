@@ -38,15 +38,12 @@ function login(req, res) {
     const { email, password } = req.body;
 
     const sql = `SELECT * FROM users WHERE email = '${email}'`;
-    console.log("Executando SQL de login:", sql);
     executeSQL(sql, (err, results) => {
         if (err) {
-            console.log("Erro ao executar SQL de login:", err);
             return res.status(500).send(err);
         }
         
         if (results.length === 0) {
-            console.log("Nenhum utilizador encontrado com o email:", email);
             return res.redirect('/login');
         }
 
@@ -54,7 +51,6 @@ function login(req, res) {
         
         bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {
-                console.log("Erro ao comparar passwords:", err);
                 return res.status(500).send("Erro a comparar passwords");
             }
 
@@ -64,7 +60,6 @@ function login(req, res) {
                     name: user.name,
                     role: user.role
                 };
-                console.log("Login bem-sucedido para o utilizador:", user.email);
                 res.redirect('/');
             } else {
                 res.redirect('/login');

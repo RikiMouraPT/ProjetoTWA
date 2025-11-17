@@ -1,4 +1,6 @@
 const { executeSQL } = require('../migrations/00-connection');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 function index(req, res) {
     const sql = 'SELECT id, name, email, role, department_id FROM users';
@@ -62,7 +64,7 @@ function edit(req, res) {
         if (error) {
             res.status(500).send(error.message);
         } else if (results.length === 0) {
-            res.status(404).send({ error: 'User not found' });
+            res.status(404).send({ error: 'Utilizador não encontrado' });
         }
         else {
             res.render('user/edit', { 
@@ -83,30 +85,38 @@ function update(req, res) {
 
     const deptIdValue = department_id ? department_id : 'NULL';
 
-    var sql;
-    if (password && password.trim() !== '') {
-        sql = `UPDATE users 
-               SET name='${name}',
-                   email='${email}',
-                   password='${password}',
-                   role='${role}',
-                   department_id=${deptIdValue}
-               WHERE id = ${id}`
-    } else {
-        sql = `UPDATE users 
-               SET name='${name}',
-                   email='${email}',
-                   role='${role}',
-                   department_id=${deptIdValue}
-               WHERE id = ${id}`;
-    }
 
-    executeSQL(sql, (error, results) => {
-        if (error) {
-            res.status(500).send(error.message);
-        } else {
-            res.redirect('/users');
+    
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) {
+            return res.status(500).send("Erro ao criar hash");
         }
+
+        var sql;
+        if (password && password.trim() !== '') {
+            sql = `UPDATE users 
+                SET name='${name}',
+                    email='${email}',
+                    password='${hash}',
+                    role='${role}',
+                    department_id=${deptIdValue}
+                WHERE id = ${id}`
+        } else {
+            sql = `UPDATE users 
+                SET name='${name}',
+                    email='${email}',
+                    role='${role}',
+                    department_id=${deptIdValue}
+                WHERE id = ${id}`;
+        }
+
+        executeSQL(sql, (error, results) => {
+            if (error) {
+                res.status(500).send(error.message);
+            } else {
+                res.redirect('/users');
+            }
+        });
     });
 }
 

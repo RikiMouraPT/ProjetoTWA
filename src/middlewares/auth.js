@@ -4,7 +4,7 @@ function isAuthenticated(req, res, next) {
         // Deixa-o passar para o próximo passo, o controller.
         next(); 
     } else {
-        res.redirect('/auth/login');
+        res.redirect('/login');
     }
 }
 
@@ -12,7 +12,7 @@ function isManager(req, res, next) {
     if (req.session.user && req.session.user.role === 'manager') {
         next();
     } else {
-        res.status(403).send('Acesso Negado. Esta área é apenas para Gerentes.');
+        res.redirect('/login');
     }
 }
 
