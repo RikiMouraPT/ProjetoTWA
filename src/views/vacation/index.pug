@@ -12,7 +12,8 @@ block content
       thead
         tr
           th ID
-          th User
+          if currentUser && currentUser.role == "manager"
+            th User
           th Tipo
           th Início
           th Fim
@@ -24,14 +25,15 @@ block content
         each vacation in vacations
           tr
             td= vacation.id
-            td= vacation.user_id
-            td= vacation.leave_type_id
+            if currentUser && currentUser.role == "manager"
+              td= vacation.user_name
+            td= vacation.leave_type_name
             td= new Date(vacation.start_date).toLocaleDateString()
             td= new Date(vacation.end_date).toLocaleDateString()
             td= vacation.status
             td
               a(href=`/vacations/${vacation.id}`, style=`text-decoration: none;`) 👁
-              if vacation.status == "pending"
+              if vacation.status == "pending" && currentUser && currentUser.role == "employee" && vacation.user_id == currentUser.id
                 |  | 
                 a(href=`/vacations/${vacation.id}/edit`, style=`text-decoration: none;`) ✎
                 |  | 

@@ -5,8 +5,13 @@ block content
 
   form(action=`/vacations/${vacation.id}?_method=PUT` method=`POST`)
     div
-      label Tipo (ID): 
-      input(type=`number` name=`leave_type_id` value=vacation.leave_type_id required)
+      label Tipo : 
+      select(name=`leave_type_id` required)
+        each leaveType in leaveTypes
+          if leaveType.id == vacation.leave_type_id
+            option(value=leaveType.id selected)= leaveType.name
+          else
+            option(value=leaveType.id)= leaveType.name
     div
       label Início: 
       - var start = vacation.start_date ? new Date(vacation.start_date).toISOString().split('T')[0] : ''

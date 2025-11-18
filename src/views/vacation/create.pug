@@ -5,8 +5,10 @@ block content
 
   form(action=`/vacations` method=`POST`)
     div
-      label Tipo de Férias (ID): 
-      input(type=`number` name=`leave_type_id` required)
+      label Tipo de Férias: 
+      select(name=`leave_type_id` required)
+        each leaveType in leaveTypes
+          option(value=leaveType.id)= leaveType.name
     div
       label Início: 
       input(type=`date` name=`start_date` required)

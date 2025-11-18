@@ -15,8 +15,8 @@ block content
     tbody
       tr
         td= vacation.id
-        td= vacation.user_id
-        td= vacation.leave_type_id
+        td= vacation.user_name
+        td= vacation.leave_type_name
         td= new Date(vacation.start_date).toLocaleDateString()
         td= new Date(vacation.end_date).toLocaleDateString()
         td= vacation.status

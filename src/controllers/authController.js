@@ -58,7 +58,8 @@ function login(req, res) {
                 req.session.user = {
                     id: user.id,
                     name: user.name,
-                    role: user.role
+                    role: user.role,
+                    department_id: user.department_id
                 };
                 res.redirect('/');
             } else {
