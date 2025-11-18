@@ -3,8 +3,9 @@ extends ../layouts/app
 block content
   h1 Pedidos de Férias
   
-  p 
-    a(href=`/vacations/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Pedido
+  if currentUser && currentUser.role == "employee"
+    p
+      a(href=`/vacations/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Pedido
 
   if vacations.length
     table(border=`1`, style=`text-align: center; justify-content: center;`)
@@ -30,11 +31,12 @@ block content
             td= vacation.status
             td
               a(href=`/vacations/${vacation.id}`, style=`text-decoration: none;`) 👁
-              |  | 
-              a(href=`/vacations/${vacation.id}/edit`, style=`text-decoration: none;`) ✎
-              |  | 
-              form(action=`/vacations/${vacation.id}?_method=DELETE`, method="POST", style="display:inline")  
-                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este pedido de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
+              if vacation.status == "pending"
+                |  | 
+                a(href=`/vacations/${vacation.id}/edit`, style=`text-decoration: none;`) ✎
+                |  | 
+                form(action=`/vacations/${vacation.id}?_method=DELETE`, method="POST", style="display:inline")  
+                  button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este pedido de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
             if currentUser && currentUser.role == "manager"
               td
                 if vacation.status == "pending"
