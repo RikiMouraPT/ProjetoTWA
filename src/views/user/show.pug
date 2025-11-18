@@ -1,7 +1,7 @@
 extends ../layouts/app
 
 block content
-  h1 Detalhe: #{user.name}
+  h1 Detalhes: #{user.name}
   
   table(border=`1`, style=`text-align: center; justify-content: center;`)
     thead
@@ -10,14 +10,14 @@ block content
         th Nome
         th Email
         th Role
-        th Department ID
+        th Dept.
     tbody
       tr
         td= user.id
         td= user.name
         td= user.email
         td= user.role
-        td= user.department_id
+        td= user.department_name
   
   hr
   a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar

@@ -3,7 +3,21 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 function index(req, res) {
-    const sql = 'SELECT id, name, email, role, department_id FROM users';
+    // list all users with department names
+    const sql = `
+        SELECT 
+            u.id, 
+            u.name, 
+            u.email, 
+            u.role, 
+            u.department_id, 
+            d.name AS department_name
+        FROM 
+            users u
+        LEFT JOIN 
+            departments d ON u.department_id = d.id
+    `;
+
     executeSQL(sql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
@@ -16,7 +30,16 @@ function index(req, res) {
 }
 
 function create (req, res) {
-    res.render('user/create');
+    const sql = `SELECT id, name FROM departments`;
+    executeSQL(sql, (error, results) => {
+        if (error) {
+            res.status(500).send(error.message);
+        } else {
+            res.render('user/create', { 
+                departments: results 
+            });
+        }
+    });
 }
 
 function store(req, res) {
@@ -41,7 +64,22 @@ function store(req, res) {
 
 function show(req, res) {
     const id = req.params.id;
-    const sql = `SELECT id, name, email, role, department_id FROM users WHERE id = ${id}`;
+
+    const sql = `
+        SELECT
+            u.id,
+            u.name,
+            u.email,
+            u.role,
+            u.department_id,
+            d.name AS department_name
+        FROM
+            users u
+        LEFT JOIN
+            departments d ON u.department_id = d.id
+        WHERE
+            u.id = ${id}
+    `;
 
     executeSQL(sql, (error, results) => {
         if (error) {
@@ -59,16 +97,25 @@ function show(req, res) {
 
 function edit(req, res) {
     const id = req.params.id;
-    const sql = `SELECT id, name, email, role, department_id FROM users WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+
+    const sql = `SELECT id, name FROM departments`;
+    executeSQL(sql, (error, resultsDepartments) => {
         if (error) {
             res.status(500).send(error.message);
-        } else if (results.length === 0) {
-            res.status(404).send({ error: 'Utilizador não encontrado' });
-        }
-        else {
-            res.render('user/edit', { 
-                user: results[0] 
+        } else {
+            const departments = resultsDepartments;
+            const userSql = `SELECT * FROM users WHERE id = ${id}`;
+            executeSQL(userSql, (error, results) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else if (results.length === 0) {
+                    res.status(404).send({ error: 'Utilizador não encontrado.' });
+                } else {
+                    res.render('user/edit', { 
+                        user: results[0],
+                        departments: departments 
+                    });
+                }
             });
         }
     });

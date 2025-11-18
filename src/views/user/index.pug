@@ -14,7 +14,7 @@ block content
           th Nome
           th Email
           th Cargo
-          th Dept. ID
+          th Dept.
           th Ações
       tbody
         each user in users
@@ -23,7 +23,7 @@ block content
             td= user.name
             td= user.email
             td= user.role
-            td= user.department_id
+            td= user.department_name
             td
               a(href=`/users/${user.id}`, style=`text-decoration: none;`) 👁
               |  | 

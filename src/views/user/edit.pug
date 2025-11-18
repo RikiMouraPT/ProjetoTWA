@@ -19,8 +19,14 @@ block content
         option(value=`employee` selected=(user.role == 'employee')) Employee
         option(value=`manager` selected=(user.role == 'manager')) Manager
     div
-      label ID Departamento: 
-      input(type=`number` name=`department_id` value=user.department_id)
+      label Departamento: 
+      select(name=`department_id`)
+        option(value=`` selected=(user.department_id == null)) -- Selecionar Departamento --
+        each department in departments
+          if department.id == user.department_id
+            option(value=department.id selected)= department.name
+          else
+            option(value=department.id)= department.name
     
     hr 
     a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar

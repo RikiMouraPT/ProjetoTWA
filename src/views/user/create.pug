@@ -16,11 +16,15 @@ block content
     div
       label(for=`role`) Cargo:
       select(name=`role`)
+        option(value=``) -- Selecionar Cargo -- 
         option(value=`employee`) Employee
         option(value=`manager`) Manager
     div
-      label(for=`department_id`) ID Departamento:
-      input(type=`number` name=`department_id`)
+      label(for=`department_id`) Departamento:
+      select(name=`department_id`)
+        option(value=``) -- Selecionar Departamento --
+        each department in departments
+          option(value=department.id)= department.name
 
     hr 
     a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
