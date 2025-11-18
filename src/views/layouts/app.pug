@@ -15,7 +15,7 @@ html
       | | 
       a(href=`/vacations`) Pedidos de Férias 
       | | 
-      p(style="display:inline") Logged in as #{currentUser.name} (#{currentUser.role}) 
+      p(style="display:inline") Logged in as #[a(href=`/users/${currentUser.id}/edit`) #{currentUser.name}] (#{currentUser.role})
       | | 
       a(href=`/logout`) Terminar Sessão 
       hr

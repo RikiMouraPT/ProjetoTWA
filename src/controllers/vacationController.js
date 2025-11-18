@@ -2,6 +2,8 @@ const { executeSQL } = require('../migrations/00-connection');
 
 function index(req, res) {
     const sql = 'SELECT * FROM vacations';
+    const manager = req.session.user;
+
     executeSQL(sql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
@@ -33,18 +35,18 @@ function create(req, res) {
 }
 
 function store(req, res) {
-    const { user_id, start_date, end_date, leave_type_id } = req.body;
-    if (!user_id || !start_date || !end_date || !leave_type_id) {
+    const {start_date, end_date, leave_type_id } = req.body;
+    if (!start_date || !end_date || !leave_type_id) {
         res.status(400).send({ error: 'Dia de início, dia de término, tipo de férias são obrigatórios' });
         return;
     }
-
-    const sql = `INSERT INTO vacations (user_id, start_date, end_date, leave_type_id, created_at) VALUES (${user_id}, '${start_date}', '${end_date}', ${leave_type_id}, NOW())`;
+    const user = req.session.user;
+    const sql = `INSERT INTO vacations (user_id, start_date, end_date, leave_type_id, created_at) VALUES (${user.id}, '${start_date}', '${end_date}', ${leave_type_id}, NOW())`;
     executeSQL(sql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
         } else {
-            res.redirect('/vacations');
+            res.redirect('/');
         }
     });
 }
@@ -75,6 +77,8 @@ function edit(req, res) {
             res.status(500).send(error.message);
         } else if (results.length === 0) {
             res.status(404).send({ error: 'Férias não encontrada' });
+        } else if (results[0].status !== 'pending') {
+            res.status(400).send({ error: 'Apenas férias pendentes podem ser editadas' });
         } else {
             res.render('vacation/edit', { 
                 vacation: results[0] 
@@ -85,19 +89,27 @@ function edit(req, res) {
 
 function update(req, res) {
     const id = req.params.id;
-    const { user_id, start_date, end_date, leave_type_id } = req.body;
+    const {start_date, end_date, leave_type_id } = req.body;
+    const user = req.session.user;
 
-    if (!user_id || !start_date || !end_date || !leave_type_id) {
-        res.status(400).send({ error: 'Dia de início, dia de término, tipo de férias são obrigatórios' });
-        return;
-    }
+    const sql = `UPDATE vacations SET user_id=${user.id}, start_date='${start_date}', end_date='${end_date}', leave_type_id=${leave_type_id} WHERE id = ${id}`;
+    const checkSql = `SELECT status FROM vacations WHERE id = ${id}`;
 
-    const sql = `UPDATE vacations SET user_id=${user_id}, start_date='${start_date}', end_date='${end_date}', leave_type_id=${leave_type_id} WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+    executeSQL(checkSql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
+        } else if (results.length === 0) {
+            res.status(404).send({ error: 'Férias não encontrada' });
+        } else if (results[0].status !== 'pending') {
+            res.status(400).send({ error: 'Apenas férias pendentes podem ser editadas' });
         } else {
-            res.redirect('/vacations');
+            executeSQL(sql, (error, results) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
 }
@@ -106,11 +118,23 @@ function destroy(req, res) {
     const id = req.params.id;
 
     const sql = `DELETE FROM vacations WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+
+    const checkSql = `SELECT status FROM vacations WHERE id = ${id}`;
+    executeSQL(checkSql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
+        } else if (results.length === 0) {
+            res.status(404).send({ error: 'Férias não encontrada' });
+        } else if (results[0].status !== 'pending') {
+            res.status(400).send({ error: 'Apenas férias pendentes podem ser apagadas' });
         } else {
-            res.redirect('/vacations');
+            executeSQL(sql, (error, results) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
 }
@@ -119,11 +143,23 @@ function accept(req, res) {
     const id = req.params.id;
 
     const sql = `UPDATE vacations SET status='approved' WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+    const checkSql = `SELECT status FROM vacations WHERE id = ${id}`;
+
+    executeSQL(checkSql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
+        } else if (results.length === 0) {
+            res.status(404).send({ error: 'Férias não encontrada' });
+        } else if (results[0].status !== 'pending') {
+            res.status(400).send({ error: 'Apenas férias pendentes podem ser aceites' });
         } else {
-            res.redirect('/vacations');
+            executeSQL(sql, (error, results) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
 }
@@ -131,11 +167,22 @@ function reject(req, res) {
     const id = req.params.id;
 
     const sql = `UPDATE vacations SET status='rejected' WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+    const checkSql = `SELECT status FROM vacations WHERE id = ${id}`;
+    executeSQL(checkSql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
+        } else if (results.length === 0) {
+            res.status(404).send({ error: 'Férias não encontrada' });
+        } else if (results[0].status !== 'pending') {
+            res.status(400).send({ error: 'Apenas férias pendentes podem ser rejeitadas' });
         } else {
-            res.redirect('/vacations');
+            executeSQL(sql, (error, results) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
 }

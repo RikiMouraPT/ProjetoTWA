@@ -25,6 +25,7 @@ block content
               |  | 
               a(href=`/departments/${department.id}/edit`, style=`text-decoration: none;`) ✎
               |  | 
-              a(href=`/departments/${department.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este departamento?');`, style=`text-decoration: none;`) ✖
+              form(action=`/departments/${department.id}?_method=DELETE`, method="POST", style="display:inline")  
+                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este utilizador?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
   else
     p Não há departamentos registados.

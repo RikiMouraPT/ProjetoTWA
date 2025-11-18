@@ -16,6 +16,5 @@ block content
         td= department.manager_id
 
   hr
-  a(href=`/departments`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
-  | 
+  a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   a(href=`/departments/${department.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar

@@ -17,6 +17,5 @@ block content
         td= leaveType.description
         td= leaveType.max_days
   hr
-  a(href=`/leave-types`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
-  | 
+  a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   a(href=`/leave-types/${leaveType.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar

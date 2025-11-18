@@ -29,6 +29,7 @@ block content
               |  | 
               a(href=`/users/${user.id}/edit`, style=`text-decoration: none;`) ✎
               |  | 
-              a(href=`/users/${user.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este utilizador?');`, style=`text-decoration: none;`) ✖
+              form(action=`/users/${user.id}?_method=DELETE`, method="POST", style="display:inline")  
+                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este utilizador?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
   else
     p Não há utilizadores registados.

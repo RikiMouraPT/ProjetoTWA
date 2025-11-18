@@ -17,6 +17,8 @@ block content
           th Fim
           th Estado
           th Ações
+          if currentUser && currentUser.role == "manager"
+            th Ações Manager
       tbody
         each vacation in vacations
           tr
@@ -27,10 +29,21 @@ block content
             td= new Date(vacation.end_date).toLocaleDateString()
             td= vacation.status
             td
-              a(href=`/users/${vacation.user_id}`, style=`text-decoration: none;`) 👁
+              a(href=`/vacations/${vacation.id}`, style=`text-decoration: none;`) 👁
               |  | 
-              a(href=`/users/${vacation.user_id}/edit`, style=`text-decoration: none;`) ✎
+              a(href=`/vacations/${vacation.id}/edit`, style=`text-decoration: none;`) ✎
               |  | 
-              a(href=`/users/${vacation.user_id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este utilizador?');`, style=`text-decoration: none;`) ✖
+              form(action=`/vacations/${vacation.id}?_method=DELETE`, method="POST", style="display:inline")  
+                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este pedido de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
+            if currentUser && currentUser.role == "manager"
+              td
+                if vacation.status == "pending"
+                  form(action=`/vacations/${vacation.id}/accept?_method=PUT`, method="POST", style="display:inline")  
+                    button(type="submit", style="background:none; border:none; color:green; cursor:pointer;") ✔ Aceitar
+                  |  | 
+                  form(action=`/vacations/${vacation.id}/reject?_method=PUT`, method="POST", style="display:inline")  
+                    button(type="submit", style="background:none; border:none; color:red; cursor:pointer;") ✘ Rejeitar
+                else
+                  p(style="display:inline") N/A
   else
     p Sem pedidos.

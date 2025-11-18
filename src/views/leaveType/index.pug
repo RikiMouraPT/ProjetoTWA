@@ -27,6 +27,7 @@ block content
               |  | 
               a(href=`/leave-types/${leaveType.id}/edit`, style=`text-decoration: none;`) ✎
               |  | 
-              a(href=`/leave-types/${leaveType.id}/delete`, onclick=`return confirm('Tem a certeza que deseja eliminar este tipo de férias?');`, style=`text-decoration: none;`) ✖
+              form(action=`/leave-types/${leaveType.id}?_method=DELETE`, method="POST", style="display:inline")  
+                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este tipo de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
   else
     p Não há tipos de férias registados.

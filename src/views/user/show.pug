@@ -20,6 +20,5 @@ block content
         td= user.department_id
   
   hr
-  a(href=`/users`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
-  | 
+  a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
   a(href=`/users/${user.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar
