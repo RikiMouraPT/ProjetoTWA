@@ -1,7 +1,16 @@
 const { executeSQL } = require('../migrations/00-connection');
 
 function index(req, res) {
-    const sql = 'SELECT * FROM departments';
+    const sql = `
+        SELECT
+            d.id,
+            d.name,
+            d.manager_id,
+            u.name AS manager_name
+        FROM
+            departments d
+        LEFT JOIN
+            users u ON d.manager_id = u.id`;
 
     executeSQL(sql, (error, results) => {
         if (error) {
@@ -15,7 +24,26 @@ function index(req, res) {
 }
 
 function create(req, res) {
-    res.render('department/create');
+    const sql = `
+    SELECT 
+        id, 
+        name 
+        FROM 
+        users 
+    WHERE 
+        role = 'manager' 
+    ORDER BY 
+        name`;
+
+    executeSQL(sql, (error, results) => {
+        if (error) {
+            res.status(500).send(error.message);
+        } else {
+            res.render('department/create', { 
+                managers: results 
+            });
+        }
+    });
 }
 
 function store(req, res) {
@@ -41,7 +69,18 @@ function store(req, res) {
 function show(req, res) {
     const id = req.params.id;
 
-    const sql = `SELECT * FROM departments WHERE id = ${id}`;
+    const sql = `
+        SELECT
+            d.id,
+            d.name,
+            d.manager_id,
+            u.name AS manager_name
+        FROM
+            departments d
+        LEFT JOIN
+            users u ON d.manager_id = u.id
+        WHERE d.id = ${id}`;
+
     executeSQL(sql, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
@@ -58,15 +97,41 @@ function show(req, res) {
 function edit(req, res) {
     const id = req.params.id;
 
-    const sql = `SELECT * FROM departments WHERE id = ${id}`;
-    executeSQL(sql, (error, results) => {
+    const sqlDept = `
+        SELECT
+            d.id,
+            d.name,
+            d.manager_id
+        FROM
+            departments d
+        WHERE d.id = ${id}`;
+
+    executeSQL(sqlDept, (error, results) => {
         if (error) {
             res.status(500).send(error.message);
         } else if (results.length === 0) {
             res.status(404).send({ error: 'Departamento não encontrado' });
         } else {
-            res.render('department/edit', { 
-                department: results[0] 
+            const department = results[0];
+            const sqlUsers = `
+            SELECT 
+                id, name 
+            FROM 
+                users 
+            WHERE 
+                role = 'manager' 
+            ORDER BY 
+                name`;    
+
+            executeSQL(sqlUsers, (error, resultsUsers) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.render('department/edit', { 
+                        department: department,
+                        managers: resultsUsers
+                    });
+                }
             });
         }
     });

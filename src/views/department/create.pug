@@ -9,8 +9,11 @@ block content
       input(type=`text` name=`name` id=`name` required)
     
     div
-      label(for=`manager_id`) ID do Gerente: 
-      input(type=`number` name=`manager_id` id=`manager_id` required)
+      label(for=`manager_id`) Gerente: 
+      select(name=`manager_id` id=`manager_id` required)
+        option(value=``) -- Selecionar Gerente --
+        each manager in managers
+          option(value=`${manager.id}`)= `${manager.name} (ID: ${manager.id})`
 
     hr 
     a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
