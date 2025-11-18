@@ -39,11 +39,14 @@ block content
               td
                 if vacation.status == "pending"
                   form(action=`/vacations/${vacation.id}/accept?_method=PUT`, method="POST", style="display:inline")  
-                    button(type="submit", style="background:none; border:none; color:green; cursor:pointer;") ✔ Aceitar
+                    button(type="submit", style="background:none; border:none; color:green; cursor:pointer;") ✔ Aprovar
                   |  | 
                   form(action=`/vacations/${vacation.id}/reject?_method=PUT`, method="POST", style="display:inline")  
                     button(type="submit", style="background:none; border:none; color:red; cursor:pointer;") ✘ Rejeitar
                 else
-                  p(style="display:inline") N/A
+                  if vacation.status == "approved"
+                    span(style="color:green;") ✔ Aprovado
+                  else if vacation.status == "rejected"
+                    span(style="color:red;") ✘ Rejeitado
   else
     p Sem pedidos.
