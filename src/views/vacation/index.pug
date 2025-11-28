@@ -2,41 +2,28 @@ extends ../layouts/app
 
 block content
   div.flex.justify-between.items-center.mb-6
-    h1.text-2xl.font-bold.text-gray-900 Pedidos de Férias
+    h1.text-2xl.font-bold.text-gray-900 Gestão de Departamento
     
-    a(href="/vacations/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
-      i.fa-solid.fa-plus.mr-2
-      | Novo Pedido
+    // Atalho para ver as minhas próprias férias (como manager também tem férias)
+    a(href=`/vacations/byUser/${user.id}`).text-blue-600
+      | Ver as minhas férias &rarr;
 
-  // --- BARRA DE FILTROS ---
+  // --- FILTROS DE DEPARTAMENTO ---
   div.mb-6.flex.space-x-2
+    a(href="/vacations" class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+      | Todos do Departamento
     
-    if viewUserId
-      // APENAS USERS VÊEM ESTA BARRA DE FILTROS
-      a(href=`/vacations/byUser/${viewUserId}` class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
-        | Todos
-      
-      a(href=`/vacations/byUser/${viewUserId}?filter=pending` class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
-        | Apenas Pendentes
+    a(href="/vacations?filter=pending" class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+      | Apenas Pendentes
 
-    else
-      //APENAS MANAGER VÊ ESTA BARRA DE FILTROS
-      if user && user.role == 'manager'
-        a(href="/vacations?filter=my_dept" class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter || currentFilter == 'my_dept' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`)
-          | Todos do Departamento
-        
-        a(href="/vacations?filter=my_dept_pending" class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'my_dept_pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
-          | Pendentes do Departamento
-
-  // --- TABELA ---
+  // --- TABELA DE GESTÃO ---
   div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
     if vacations.length > 0
       table.min-w-full.divide-y.divide-gray-200
         thead.bg-gray-50
           tr
             th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase ID
-            if user && user.role == "manager"
-              th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase User
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Colaborador
             th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Tipo
             th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Datas
             th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Estado
@@ -47,8 +34,9 @@ block content
             tr
               td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 ##{v.id}
               
-              if user && user.role == "manager"
-                td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 #{v.user_name}
+              td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 
+                div #{v.user_name}
+                div.text-xs.text-gray-400 ID: #{v.user_id}
               
               td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 #{v.leave_type_name}
               
@@ -58,34 +46,24 @@ block content
               
               td.px-6.py-4.whitespace-nowrap
                 if v.status == 'approved'
-                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-green-100.text-green-800 Aprovado
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-green-100.text-green-800 Aprovado
                 else if v.status == 'rejected'
-                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-red-100.text-red-800 Rejeitado
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-red-100.text-red-800 Rejeitado
                 else
-                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
               
               td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
-                a(href=`/vacations/${v.id}` class="text-gray-400 hover:text-blue-600 mr-3")
-                  i.fa-solid.fa-eye
-
-                // Ações do Dono
-                if v.status == "pending" && user && (user.role == "employee" && v.user_id == user.id || user.id == v.user_id)
-                  a(href=`/vacations/${v.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3")
-                    i.fa-solid.fa-pen
-                  
-                  form(action=`/vacations/${v.id}?_method=DELETE` method="POST" class="inline-block")
-                    button(type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apagar pedido?')")
-                      i.fa-solid.fa-trash
-
-                // Ações do Manager (Aprovar/Rejeitar) - Só para outros users
-                if user && user.role == "manager" && v.status == "pending" && v.user_id != user.id
+                // Botões de Decisão (Só se for pendente e não for eu próprio)
+                if v.status == "pending" && v.user_id != user.id
                   form(action=`/vacations/${v.id}/accept?_method=PUT` method="POST" class="inline-block mr-2")
-                    button(type="submit" class="text-green-600 hover:text-green-900 font-bold")
+                    button(type="submit" class="text-green-600 hover:text-green-900 font-bold" title="Aprovar")
                       i.fa-solid.fa-check
                   
                   form(action=`/vacations/${v.id}/reject?_method=PUT` method="POST" class="inline-block")
-                    button(type="submit" class="text-red-600 hover:text-red-900 font-bold")
+                    button(type="submit" class="text-red-600 hover:text-red-900 font-bold" title="Rejeitar")
                       i.fa-solid.fa-xmark
+                else
+                  span.text-gray-400 -
     else
       div.p-12.text-center
-        p.text-gray-500 Não existem pedidos para este filtro.
+        p.text-gray-500 Não existem pedidos para mostrar neste filtro.

@@ -1,0 +1,69 @@
+extends ../layouts/app
+
+block content
+  div.flex.justify-between.items-center.mb-6
+    // Título Fixo (já que é a área pessoal)
+    h1.text-2xl.font-bold.text-gray-900 As Minhas Férias
+    
+    // Botão de Criar (Sempre visível nesta vista)
+    a(href="/vacations/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
+      i.fa-solid.fa-plus.mr-2
+      | Pedir Férias
+
+  // --- FILTROS ---
+  div.mb-6.flex.space-x-2
+    // Botão "Todos"
+    // Lógica: Se currentFilter estiver vazio ou for null, este botão fica "Ativo" (Escuro)
+    a(href=`/vacations/byUser/${targetUserId}` class=`px-4 py-2 rounded-md text-sm font-medium border transition ${!currentFilter ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+      | Todos
+    
+    // Botão "Pendentes"
+    // Lógica: Se currentFilter for 'pending', este botão fica "Ativo" (Amarelo)
+    a(href=`/vacations/byUser/${targetUserId}?filter=pending` class=`px-4 py-2 rounded-md text-sm font-medium border transition ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 ring-1 ring-yellow-300' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+      | Pendentes
+
+  div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
+    if vacations.length > 0
+      table.min-w-full.divide-y.divide-gray-200
+        thead.bg-gray-50
+          tr
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase.tracking-wider Tipo
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase.tracking-wider Datas
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase.tracking-wider Estado
+            th.px-6.py-3.text-right.text-xs.font-bold.text-gray-500.uppercase.tracking-wider Ações
+        
+        tbody.bg-white.divide-y.divide-gray-200
+          each v in vacations
+            tr
+              td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 #{v.leave_type_name}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500
+                span #{new Date(v.start_date).toLocaleDateString()}
+                span.mx-2.text-gray-400 até
+                span #{new Date(v.end_date).toLocaleDateString()}
+              
+              td.px-6.py-4.whitespace-nowrap
+                if v.status == 'approved'
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-green-100.text-green-800 Aprovado
+                else if v.status == 'rejected'
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-red-100.text-red-800 Rejeitado
+                else
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
+              
+              td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
+                // Botão Ver
+                a(href=`/vacations/${v.id}` class="text-gray-400 hover:text-blue-600 mr-3" title="Ver Detalhes")
+                  i.fa-solid.fa-eye
+
+                // Ações do Dono (Só se for pendente)
+                if v.status == "pending"
+                  a(href=`/vacations/${v.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3" title="Editar")
+                    i.fa-solid.fa-pen
+                  
+                  form(action=`/vacations/${v.id}?_method=DELETE` method="POST" class="inline-block")
+                    button(type="submit" class="text-red-600 hover:text-red-900" title="Cancelar" onclick="return confirm('Cancelar este pedido?')")
+                      i.fa-solid.fa-trash
+    else
+      div.p-12.text-center
+        h3.text-lg.font-medium.text-gray-900 Sem histórico
+        p.text-gray-500 Não existem pedidos de férias registados para este filtro.

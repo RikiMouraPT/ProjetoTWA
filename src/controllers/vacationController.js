@@ -8,17 +8,16 @@ function index(req, res) {
         return res.redirect(`/vacations/byUser/${user.id}`);
     }
 
-    // Array para acumular as condições do SQL (ex: ["u.dept_id = 1", "v.status = 'pending'"])
     let conditions = [];
-    const deptId = user.department_id;
+
+    const deptId = user.department_id || 0;
     conditions.push(`u.department_id = ${deptId}`);
+
+    // Filtro Opcional: Apenas Pendentes
     if (filter === 'pending') {
         conditions.push("v.status = 'pending'");
     }
-
-    // Constrói o WHERE dinamicamente (junta as condições com 'AND')
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
+    const whereClause = `WHERE ${conditions.join(' AND ')}`;
     const sql = `
         SELECT 
             v.id, v.start_date, v.end_date, v.status, v.user_id,
@@ -32,9 +31,8 @@ function index(req, res) {
     `;
 
     executeSQL(sql, (error, results) => {
-        if (error) {
-            return res.status(500).send(error.message);
-        }
+        if (error) return res.status(500).send(error.message);
+        
         res.render('vacation/index', { 
             vacations: results,
             currentFilter: filter 
@@ -42,42 +40,33 @@ function index(req, res) {
     });
 }
 
+// Mostra apenas as férias de um utilizador específico
 function indexByUser(req, res) {
     const userId = req.params.userId;
     const loggedInUser = req.session.user;
     const filter = req.query.filter;
 
+    // Só mostra se for o próprio
     if (loggedInUser.id != userId) {
         return res.status(403).render('errors/403');
     }
 
-    let conditions = [];
-    conditions.push(`v.user_id = ${userId}`);
-    if (filter === 'pending') {
-        conditions.push("v.status = 'pending'");
-    }
-
-    // Juntar as condições com 'AND' (ex: "WHERE v.user_id = 5 AND v.status = 'pending'")
-    const whereClause = `WHERE ${conditions.join(' AND ')}`;
-
     const sql = `
         SELECT 
             v.id, v.start_date, v.end_date, v.status, v.user_id,
-            u.name as user_name,
             lt.name as leave_type_name
         FROM vacations v
-        JOIN users u ON v.user_id = u.id
         JOIN leave_types lt ON v.leave_type_id = lt.id
-        ${whereClause}
+        WHERE v.user_id = ${userId}
         ORDER BY v.start_date DESC`;
 
     executeSQL(sql, (error, results) => {
         if (error) return res.status(500).send(error.message);
         
-        res.render('vacation/index', { 
+        res.render('vacation/my-vacations', { 
             vacations: results,
-            currentFilter: filter,
-            viewUserId: userId
+            targetUserId: userId,
+            currentFilter: filter
         });
     });
 }
