@@ -76,7 +76,7 @@ block content
           h3.ml-4.text-lg.font-bold.text-gray-900 Pedir Férias
         p.text-gray-500.text-sm Marca os teus próximos dias de descanso.
 
-      a(href="/vacations").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
+      a(href=`/vacations/byUser/${user.id}`).block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
         div.flex.items-center.mb-3
           div.p-3.rounded-full.bg-indigo-100.text-indigo-600
             i.fa-solid.fa-list-check.text-xl
@@ -85,7 +85,13 @@ block content
 
       // Ações de Gestão (Só Managers)
       if user.role == 'manager'
-        
+        a(href="/users").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
+          div.flex.items-center.mb-3
+            div.p-3.rounded-full.bg-purple-100.text-purple-600
+              i.fa-solid.fa-users-gear.text-xl
+            h3.ml-4.text-lg.font-bold.text-gray-900 Pedidos do Departamento
+          p.text-gray-500.text-sm Aprovar ou rejeitar pedidos da tua equipa.
+
         a(href="/users").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
           div.flex.items-center.mb-3
             div.p-3.rounded-full.bg-purple-100.text-purple-600
