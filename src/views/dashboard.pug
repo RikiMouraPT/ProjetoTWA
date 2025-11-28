@@ -1,12 +1,12 @@
 extends layouts/app
 
 block content
-  div.max-w-5xl.mx-auto
+  div.max-w-6xl.mx-auto
     
-    // 1. Cabeçalho de Boas-vindas
-    div.bg-white.shadow.rounded-lg.p-6.mb-8.flex.items-center.justify-between.border.border-gray-100
+    // 1. Cabeçalho
+    div.bg-white.shadow.rounded-lg.p-6.mb-8.flex.items-center.justify-between.border.border-gray-200
       div
-        h1.text-2xl.font-bold.text-gray-900 Olá, #{user.name}!
+        h1.text-2xl.font-bold.text-gray-900 Olá, #{user.name}! 👋
         p.text-gray-500 Cargo: <span class="font-semibold text-blue-600 uppercase">#{user.role}</span>
       
       div
@@ -14,102 +14,97 @@ block content
           span.w-2.h-2.bg-green-500.rounded-full.mr-2
           | Conta Ativa
 
-    // 2. Resumo de Estatísticas (Cards Coloridos)
-    h2.text-lg.font-bold.text-gray-800.mb-4 Resumo Anual
-    div.grid.grid-cols-3.gap-6.mb-8
+    // 2. ESTATÍSTICAS (4 Colunas)
+    h2.text-lg.font-bold.text-gray-800.mb-4 Resumo
+    div.grid.grid-cols-4.gap-4.mb-8
       
-      // Card 1: Total
-      div.bg-white.p-6.rounded-xl.shadow.border.border-gray-200.flex.items-center
-        div.p-4.rounded-full.bg-blue-50.text-blue-600.mr-4
-          i.fa-solid.fa-calendar-day.text-xl
-        div
-          p.text-sm.text-gray-500 Direito Total
-          p.text-2xl.font-bold.text-gray-900 #{stats ? stats.total : '-'}
-            span.text-xs.text-gray-400.font-normal.ml-1 dias
+      // Card 1: Dias de Férias (X / Y)
+      div.bg-white.p-5.rounded-xl.shadow.border.border-gray-200.text-center
+        div.text-blue-600.mb-2
+          i.fa-solid.fa-calendar-days.text-3xl
+        p.text-sm.text-gray-500.font-medium Dias de Férias
+        p.text-2xl.font-bold.text-gray-900
+          | #{stats ? stats.daysUsed : 0} 
+          span.text-gray-400.text-lg / #{stats ? stats.daysTotal : 0}
 
-      // Card 2: Usados
-      div.bg-white.p-6.rounded-xl.shadow.border.border-gray-200.flex.items-center
-        div.p-4.rounded-full.bg-green-50.text-green-600.mr-4
-          i.fa-solid.fa-check-circle.text-xl
-        div
-          p.text-sm.text-gray-500 Aprovadas / Gozadas
-          p.text-2xl.font-bold.text-gray-900 #{stats ? stats.used : '-'}
-            span.text-xs.text-gray-400.font-normal.ml-1 dias
+      // Card 2: Aprovadas (Count)
+      div.bg-white.p-5.rounded-xl.shadow.border.border-gray-200.text-center
+        div.text-green-600.mb-2
+          i.fa-solid.fa-thumbs-up.text-3xl
+        p.text-sm.text-gray-500.font-medium Aprovadas
+        p.text-2xl.font-bold.text-gray-900 #{stats ? stats.countApproved : 0}
 
-      // Card 3: Pendentes
-      div.bg-white.p-6.rounded-xl.shadow.border.border-gray-200.flex.items-center
-        div.p-4.rounded-full.bg-yellow-50.text-yellow-600.mr-4
-          i.fa-solid.fa-hourglass-half.text-xl
-        div
-          p.text-sm.text-gray-500 Pedidos Pendentes
-          p.text-2xl.font-bold.text-gray-900 #{stats ? stats.pending : '-'}
-            span.text-xs.text-gray-400.font-normal.ml-1 pedidos
+      // Card 3: Gozadas (Dias ou Count)
+      // Estou a mostrar Dias Gozados Totais
+      div.bg-white.p-5.rounded-xl.shadow.border.border-gray-200.text-center
+        div.text-purple-600.mb-2
+          i.fa-solid.fa-plane-arrival.text-3xl
+        p.text-sm.text-gray-500.font-medium Gozadas
+        p.text-2xl.font-bold.text-gray-900 #{stats ? stats.daysUsed : 0}
+          span.text-xs.text-gray-400.ml-1 dias
 
-    // 3. Detalhe por Tipo de Férias (Se existirem dados)
-    if stats && stats.byType
+      // Card 4: Pending (Count)
+      div.bg-white.p-5.rounded-xl.shadow.border.border-gray-200.text-center
+        div.text-yellow-500.mb-2
+          i.fa-solid.fa-clock.text-3xl
+        p.text-sm.text-gray-500.font-medium Pending
+        p.text-2xl.font-bold.text-gray-900 #{stats ? stats.countPending : 0}
+
+    // 3. Detalhe por Tipo
+    if stats && stats.byType && stats.byType.length > 0
       h2.text-lg.font-bold.text-gray-800.mb-4 Disponibilidade por Tipo
       div.grid.grid-cols-3.gap-4.mb-8
         each type in stats.byType
-          div.bg-white.p-4.rounded-lg.border.border-gray-200.shadow-sm
+          div.bg-white.p-5.rounded-lg.border.border-gray-200.shadow-sm
             div.flex.justify-between.items-center.mb-2
-              h3.font-medium.text-gray-900 #{type.name}
-              span.text-xs.font-semibold.px-2.py-1.bg-gray-100.rounded-md #{type.max_days} max
+              h3.font-bold.text-gray-700 #{type.name}
+              if type.max_days
+                span.text-xs.font-semibold.px-2.py-1.bg-gray-100.rounded-md #{type.max_days} max
+              else
+                span.text-xs.font-semibold.px-2.py-1.bg-blue-50.text-blue-600.rounded-md Ilimitado
             
-            // Barra de Progresso Simples
-            - var percentage = (type.days_used / type.max_days) * 100
-            div.w-full.bg-gray-100.rounded-full.h-2.mb-2
-              div(class=`bg-blue-600 h-2 rounded-full` style=`width: ${percentage}%`)
-            
-            div.flex.justify-between.text-xs.text-gray-500
-              span Usados: #{type.days_used}
-              span Restantes: #{type.max_days - type.days_used}
+            if type.max_days
+              - var percentage = (type.days_used / type.max_days) * 100
+              - if (percentage > 100) percentage = 100
+              div.w-full.bg-gray-100.rounded-full.h-2.mb-3
+                div(class="bg-blue-600 h-2 rounded-full" style=`width: ${percentage}%`)
+              
+              div.flex.justify-between.text-xs.text-gray-500
+                span Usados: <strong>#{type.days_used}</strong>
+                span Restantes: <strong>#{type.max_days - type.days_used}</strong>
+            else
+              div.mt-2.text-sm.text-gray-500
+                p Usados: <strong>#{type.days_used}</strong> dias
 
-    // 4. Área de Ações Rápidas
-    h2.text-lg.font-bold.text-gray-800.mb-4 Acesso Rápido
+    // 4. Ações
+    h2.text-lg.font-bold.text-gray-800.mb-4 Menu Rápido
     div.grid.grid-cols-2.gap-6
 
-      // Ações Comuns (Todos)
       a(href="/vacations/create").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
         div.flex.items-center.mb-3
           div.p-3.rounded-full.bg-blue-100.text-blue-600
-            i.fa-solid.fa-calendar-plus.text-xl
+            i.fa-solid.fa-plus.text-xl
           h3.ml-4.text-lg.font-bold.text-gray-900 Pedir Férias
         p.text-gray-500.text-sm Marca os teus próximos dias de descanso.
 
       a(href=`/vacations/byUser/${user.id}`).block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
         div.flex.items-center.mb-3
           div.p-3.rounded-full.bg-indigo-100.text-indigo-600
-            i.fa-solid.fa-list-check.text-xl
+            i.fa-solid.fa-list.text-xl
           h3.ml-4.text-lg.font-bold.text-gray-900 Meus Pedidos
-        p.text-gray-500.text-sm Consulta o estado das tuas aprovações.
+        p.text-gray-500.text-sm Consulta o histórico e estado dos teus pedidos.
 
-      // Ações de Gestão (Só Managers)
       if user.role == 'manager'
-        a(href="/users").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
+        a(href="/vacations").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
           div.flex.items-center.mb-3
             div.p-3.rounded-full.bg-purple-100.text-purple-600
-              i.fa-solid.fa-users-gear.text-xl
-            h3.ml-4.text-lg.font-bold.text-gray-900 Pedidos do Departamento
-          p.text-gray-500.text-sm Aprovar ou rejeitar pedidos da tua equipa.
+              i.fa-solid.fa-check-double.text-xl
+            h3.ml-4.text-lg.font-bold.text-gray-900 Aprovar Férias
+          p.text-gray-500.text-sm Gerir os pedidos da tua equipa.
 
         a(href="/users").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
-          div.flex.items-center.mb-3
-            div.p-3.rounded-full.bg-purple-100.text-purple-600
-              i.fa-solid.fa-users-gear.text-xl
-            h3.ml-4.text-lg.font-bold.text-gray-900 Gerir Equipa
-          p.text-gray-500.text-sm Adicionar ou editar utilizadores.
-
-        a(href="/departments").block.p-6.bg-white.rounded-lg.shadow.border.border-gray-200
           div.flex.items-center.mb-3
             div.p-3.rounded-full.bg-orange-100.text-orange-600
-              i.fa-solid.fa-building.text-xl
-            h3.ml-4.text-lg.font-bold.text-gray-900 Departamentos
-          p.text-gray-500.text-sm Organizar a estrutura da empresa.
-
-    // 5. Rodapé Informativo
-    div.mt-8.bg-blue-50.rounded-lg.p-4.border.border-blue-100.flex
-      div.flex-shrink-0.mr-3
-        i.fa-solid.fa-circle-info.text-blue-400
-      div
-        h3.text-sm.font-medium.text-blue-800 Precisa de ajuda?
-        p.text-sm.text-blue-700.mt-1 Se tiveres dúvidas sobre a política de férias, contacta os Recursos Humanos.
+              i.fa-solid.fa-users-gear.text-xl
+            h3.ml-4.text-lg.font-bold.text-gray-900 Gerir Equipa
+          p.text-gray-500.text-sm Adicionar utilizadores ou departamentos.
