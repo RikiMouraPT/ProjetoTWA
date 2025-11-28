@@ -14,4 +14,4 @@ function executeSQL(sqlQuery, callback) {
   });
 };
 
-module.exports = { executeSQL };
+module.exports = { con, executeSQL };
