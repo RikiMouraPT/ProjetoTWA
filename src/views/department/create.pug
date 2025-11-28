@@ -1,20 +1,27 @@
 extends ../layouts/app
 
 block content
-  h1 Novo Departamento
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Novo Departamento
+        p.text-sm.text-gray-500 Cria uma nova área na empresa.
 
-  form(action=`/departments` method=`POST`)
-    div
-      label(for=`name`) Nome do Departamento: 
-      input(type=`text` name=`name` id=`name` required)
-    
-    div
-      label(for=`manager_id`) Gerente: 
-      select(name=`manager_id` id=`manager_id` required)
-        option(value=``) -- Selecionar Gerente --
-        each manager in managers
-          option(value=`${manager.id}`)= `${manager.name} (ID: ${manager.id})`
+      div.p-6
+        form(action="/departments" method="POST" class="space-y-6")
+          
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome do Departamento
+            input(type="text" name="name" id="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
 
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Departamento
+          div
+            label(for="manager_id" class="block text-sm font-medium text-gray-700") Gerente (Opcional)
+            select(name="manager_id" id="manager_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+              option(value="") -- Nenhum --
+              if managers
+                each m in managers
+                  option(value=m.id)= m.name
+
+          div.flex.justify-end.pt-4
+            a(href="/departments" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3") Cancelar
+            button(type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm") Criar Departamento

@@ -1,44 +1,65 @@
 doctype html
-html
+html(lang="pt")
   head
+    meta(charset="utf-8")
     title Leavely App
-  body
-    if currentUser && currentUser.role == "manager"
-      nav
-      a(href=`/`) Home 
-      | | 
-      a(href=`/users`) Utilizadores 
-      | | 
-      a(href=`/departments`) Departamentos 
-      | | 
-      a(href=`/leave-types`) Tipos de Férias 
-      | | 
-      a(href=`/vacations`) Pedidos de Férias 
-      | | 
-      p(style="display:inline") Logged in as #[a(href=`/users/${currentUser.id}/edit`) #{currentUser.name}] (#{currentUser.role})
-      | | 
-      a(href=`/logout`) Terminar Sessão 
-      hr
-    else if currentUser && currentUser.role == "employee"
-      nav
-      a(href=`/`) Home 
-      | | 
-      a(href=`/vacations/byUser/${currentUser.id}`) Meus Pedidos de Férias 
-      | | 
-      p(style="display:inline") Logged in as #[a(href=`/users/${currentUser.id}/edit`) #{currentUser.name}] (#{currentUser.role}) 
-      | | 
-      a(href=`/logout`) Terminar Sessão 
-      hr
-    else
-      nav
-      a(href=`/`) Home 
-      | | 
-      a(href=`/login`) Iniciar Sessão 
-      | | 
-      a(href=`/register`) Registar 
-      | | 
-      a Não autenticado
-      hr
     
+    // 1. Tailwind CSS (Padrão)
+    script(src="https://cdn.tailwindcss.com")
     
-    block content
+    // 2. FontAwesome (Ícones)
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+
+  body.bg-gray-50.text-gray-800.font-sans.min-h-screen.flex.flex-col
+
+    // --- NAVBAR (Sempre visível estilo Desktop) ---
+    nav.bg-white.shadow-sm.border-b.border-gray-200
+      div.max-w-7xl.mx-auto.px-8
+        div.flex.justify-between.h-16
+          
+          // LADO ESQUERDO: Logo e Links
+          div.flex.items-center
+            // Logo
+            a(href="/dashboard").text-2xl.font-bold.text-blue-600.flex.items-center.mr-10
+              i.fa-solid.fa-plane-departure.mr-2
+              | Leavely
+
+            // Links (Sempre visíveis)
+            div.flex.space-x-4
+              a(href="/" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Home
+
+              if user && user.role == "manager"
+                a(href="/vacations" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Pedidos do Departamento
+                a(href=`/vacations/byUser/${user.id}` class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Meus Pedidos
+                a(href="/users" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Utilizadores
+                a(href="/departments" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Departamentos
+                a(href="/leave-types" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Tipos
+              
+              else if user && user.role == "employee"
+                a(href=`/vacations/byUser/${user.id}` class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition") Meus Pedidos
+
+          // LADO DIREITO: User Profile
+          div.flex.items-center
+            if user
+              div.flex.items-center.space-x-4
+                div.text-right
+                  a(href=`/users/${user.id}/edit` class="block text-sm font-medium text-gray-900 hover:text-blue-600 hover:underline") #{user.name}
+                  div.text-xs.text-gray-500.uppercase #{user.role}
+                
+                a(href="/logout" class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-full transition" title="Sair")
+                  i.fa-solid.fa-right-from-bracket
+            else
+              div.space-x-3
+                a(href="/login" class="text-gray-500 hover:text-blue-600 font-medium px-3 py-2 text-sm") Entrar
+                a(href="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition shadow-sm") Registar
+
+    // --- CONTEÚDO ---
+    main.flex-grow
+      // Container fixo largo para parecer desktop
+      div.max-w-7xl.mx-auto.py-8.px-8
+        block content
+
+    // --- FOOTER ---
+    footer.bg-white.border-t.border-gray-200.mt-auto
+      div.max-w-7xl.mx-auto.py-6.px-8
+        p.text-center.text-sm.text-gray-400 &copy; 2024 Leavely App.

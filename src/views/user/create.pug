@@ -1,31 +1,43 @@
 extends ../layouts/app
 
 block content
-  h1 Novo Utilizador
-  
-  form(action=`/users` method=`POST`)
-    div
-      label(for=`name`) Nome:
-      input(type=`text` name=`name` required)
-    div
-      label(for=`email`) Email:
-      input(type=`email` name=`email` required)
-    div
-      label(for=`password`) Password:
-      input(type=`password` name=`password` required)
-    div
-      label(for=`role`) Cargo:
-      select(name=`role`)
-        option(value=``) -- Selecionar Cargo -- 
-        option(value=`employee`) Employee
-        option(value=`manager`) Manager
-    div
-      label(for=`department_id`) Departamento:
-      select(name=`department_id`)
-        option(value=``) -- Selecionar Departamento --
-        each department in departments
-          option(value=department.id)= department.name
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Novo Utilizador
+        p.text-sm.text-gray-500 Adicionar um novo membro à equipa.
 
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Utilizador
+      div.p-6
+        form(action="/users" method="POST" class="space-y-6")
+          
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome Completo
+            input(type="text" name="name" id="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="email" class="block text-sm font-medium text-gray-700") Email
+            input(type="email" name="email" id="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="password" class="block text-sm font-medium text-gray-700") Password
+            input(type="password" name="password" id="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div.grid.grid-cols-2.gap-6
+            div
+              label(for="role" class="block text-sm font-medium text-gray-700") Cargo
+              select(name="role" id="role" required class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+                option(value="" disabled selected) -- Selecionar --
+                option(value="employee") Employee
+                option(value="manager") Manager
+
+            div
+              label(for="department_id" class="block text-sm font-medium text-gray-700") Departamento
+              select(name="department_id" id="department_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+                option(value="") -- Nenhum --
+                if departments
+                  each dept in departments
+                    option(value=dept.id)= dept.name
+
+          div.flex.justify-end.pt-4
+            a(href="/users" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3") Cancelar
+            button(type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm") Criar Utilizador

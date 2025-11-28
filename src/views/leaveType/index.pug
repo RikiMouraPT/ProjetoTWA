@@ -1,33 +1,50 @@
 extends ../layouts/app
 
 block content
-  h1 Tipos de Férias
+  div.flex.justify-between.items-center.mb-6
+    h1.text-2xl.font-bold.text-gray-900 Tipos de Férias
+    
+    a(href="/leave-types/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
+      i.fa-solid.fa-plus.mr-2
+      | Novo Tipo
 
-  p
-    a(href=`/leave-types/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Tipo
-
-  if leaveTypes.length
-    table(border=`1`, style=`text-align: center; justify-content: center;`)
-      thead
-        tr
-          th ID
-          th Nome
-          th Descrição
-          th Max. Dias
-          th Ações
-      tbody
-        each leaveType in leaveTypes
+  div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
+    if leaveTypes.length > 0
+      table.min-w-full.divide-y.divide-gray-200
+        thead.bg-gray-50
           tr
-            td= leaveType.id
-            td= leaveType.name
-            td= leaveType.description
-            td= leaveType.max_days
-            td
-              a(href=`/leave-types/${leaveType.id}`, style=`text-decoration: none;`) 👁
-              |  | 
-              a(href=`/leave-types/${leaveType.id}/edit`, style=`text-decoration: none;`) ✎
-              |  | 
-              form(action=`/leave-types/${leaveType.id}?_method=DELETE`, method="POST", style="display:inline")  
-                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este tipo de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
-  else
-    p Não há tipos de férias registados.
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase ID
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Nome
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Descrição
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Max. Dias
+            th.px-6.py-3.text-right.text-xs.font-bold.text-gray-500.uppercase Ações
+        
+        tbody.bg-white.divide-y.divide-gray-200
+          each lt in leaveTypes
+            tr
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 ##{lt.id}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 #{lt.name}
+              
+              td.px-6.py-4.text-sm.text-gray-500.max-w-xs.truncate
+                | #{lt.description || '-'}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500
+                if lt.max_days
+                  span.inline-flex.items-center.px-2.py-1.rounded-full.text-xs.font-medium.bg-blue-100.text-blue-800 #{lt.max_days} dias
+                else
+                  span.text-gray-400 Ilimitado
+
+              td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
+                a(href=`/leave-types/${lt.id}` class="text-gray-400 hover:text-blue-600 mr-3" title="Ver Detalhes")
+                  i.fa-solid.fa-eye
+                
+                a(href=`/leave-types/${lt.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3" title="Editar")
+                  i.fa-solid.fa-pen
+                
+                form(action=`/leave-types/${lt.id}?_method=DELETE` method="POST" class="inline-block")
+                  button(type="submit" class="text-red-600 hover:text-red-900" title="Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este tipo de férias?')")
+                    i.fa-solid.fa-trash
+    else
+      div.p-12.text-center
+        p.text-gray-500 Não existem tipos de férias registados.

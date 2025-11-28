@@ -1,21 +1,61 @@
-extends ../layouts/app
+doctype html
+html(lang="pt")
+  head
+    meta(charset="utf-8")
+    title Registar - Leavely
+    script(src="https://cdn.tailwindcss.com")
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
 
-block content
-  h1 Registar
-  form(action="/register" method="POST")
-    div
-      label(for="name") Nome:
-      input(type="text" name="name" required)
-    div
-      label(for="email") Email:
-      input(type="email" name="email" required)
-    div
-      label(for="password") Password:
-      input(type="password" name="password" required)
-    div
-      label(for="role") Cargo:
-      select(name="role")
-        option(value="employee") Employee
-        option(value="manager") Manager
-    br
-    button(type="submit") Registar
+  body.bg-gray-50.text-gray-900.flex.items-center.justify-center.min-h-screen
+    div.max-w-md.w-full.space-y-8.p-4
+
+      // 1. Cabeçalho
+      div.text-center
+        a(href="/").inline-flex.items-center.gap-2.mb-6
+          i.fa-solid.fa-plane-departure.text-blue-600.text-4xl
+          span.font-bold.text-2xl Leavely
+        
+        h2.text-2xl.font-bold.text-gray-900 Criar nova conta
+        p.mt-2.text-sm.text-gray-600
+          | Já tens conta? 
+          a(href="/login" class="font-medium text-blue-600 hover:text-blue-500 hover:underline") Faz login aqui
+
+      // 2. Cartão do Formulário
+      div.bg-white.py-8.px-4.shadow.rounded-lg.border.border-gray-200
+        form(action="/register" method="POST" class="space-y-6")
+          
+          // Nome
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome Completo
+            div.mt-1
+              input(id="name" name="name" type="text" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          // Email
+          div
+            label(for="email" class="block text-sm font-medium text-gray-700") Endereço de Email
+            div.mt-1
+              input(id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          // Password
+          div
+            label(for="password" class="block text-sm font-medium text-gray-700") Password
+            div.mt-1
+              input(id="password" name="password" type="password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          // Cargo (Role)
+          div
+            label(for="role" class="block text-sm font-medium text-gray-700") Cargo
+            div.mt-1
+              select(id="role" name="role" class="block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+                option(value="employee") Funcionário
+                option(value="manager") Gerente
+
+          // Botão Registar
+          div
+            button(type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500")
+              | Criar Conta
+            a(href="/" class="mt-3 block text-center text-sm text-gray-600 hover:text-blue-600 hover:underline") Voltar à Página Inicial
+
+      // Rodapé
+      p.text-center.text-xs.text-gray-400 &copy; 2024 Leavely App

@@ -1,0 +1,18 @@
+extends ../layouts/app
+
+block content
+  div.flex.flex-col.items-center.justify-center.py-20
+    
+    // Ícone de Bloqueio
+    div.bg-red-100.p-6.rounded-full.mb-6
+      i.fa-solid.fa-shield-halved.text-red-600.text-5xl
+
+    // Mensagem
+    h1.text-4xl.font-bold.text-gray-900.mb-2 403 - Acesso Negado
+    p.text-gray-600.text-lg.text-center.max-w-md.mb-8
+      | Desculpa, não tens permissão para aceder a esta página ou realizar esta ação.
+
+    // Botão de Voltar
+    a(href="/").inline-flex.items-center.px-6.py-3.border.border-transparent.text-base.font-medium.rounded-md.text-white.bg-blue-600
+      i.fa-solid.fa-arrow-left.mr-2
+      | Voltar à Dashboard

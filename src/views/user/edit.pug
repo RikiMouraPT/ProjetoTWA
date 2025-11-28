@@ -1,33 +1,41 @@
 extends ../layouts/app
 
 block content
-  h1 Editar Utilizador: #{user.name}
-  
-  form(action=`/users/${user.id}?_method=PUT` method=`POST`)
-    div
-      label Nome: 
-      input(type=`text` name=`name` value=user.name required)
-    div
-      label Email: 
-      input(type=`email` name=`email` value=user.email required)
-    div
-      label Password: 
-      input(type=`password` name=`password` placeholder=`Nova pass (opcional)`)
-    div
-      label Cargo: 
-      select(name=`role`)
-        option(value=`employee` selected=(user.role == 'employee')) Employee
-        option(value=`manager` selected=(user.role == 'manager')) Manager
-    div
-      label Departamento: 
-      select(name=`department_id`)
-        option(value=`` selected=(user.department_id == null)) -- Selecionar Departamento --
-        each department in departments
-          if department.id == user.department_id
-            option(value=department.id selected)= department.name
-          else
-            option(value=department.id)= department.name
-    
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Editar: #{user.name}
+      
+      div.p-6
+        form(action=`/users/${user.id}?_method=PUT` method="POST" class="space-y-6")
+          
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome
+            input(type="text" name="name" value=user.name required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="email" class="block text-sm font-medium text-gray-700") Email
+            input(type="email" name="email" value=user.email required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="password" class="block text-sm font-medium text-gray-700") Password
+            input(type="password" name="password" placeholder="Deixar em branco para manter a atual" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div.grid.grid-cols-2.gap-6
+            div
+              label(for="role" class="block text-sm font-medium text-gray-700") Cargo
+              select(name="role" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+                option(value="employee" selected=(user.role == 'employee')) Employee
+                option(value="manager" selected=(user.role == 'manager')) Manager
+
+            div
+              label(for="department_id" class="block text-sm font-medium text-gray-700") Departamento
+              select(name="department_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+                option(value="" selected=(user.department_id == null)) -- Nenhum --
+                if departments
+                  each dept in departments
+                    option(value=dept.id selected=(dept.id == user.department_id))= dept.name
+
+          div.flex.justify-end.pt-4
+            a(href="/users" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3") Cancelar
+            button(type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm") Atualizar

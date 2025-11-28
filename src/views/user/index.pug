@@ -1,35 +1,55 @@
 extends ../layouts/app
 
 block content
-  h1 Lista de Utilizadores
-  
-  p
-    a(href=`/users/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Utilizador
+  div.flex.justify-between.items-center.mb-6
+    h1.text-2xl.font-bold.text-gray-900 Utilizadores
+    
+    a(href="/users/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
+      i.fa-solid.fa-user-plus.mr-2
+      | Novo Utilizador
 
-  if users.length
-    table(border=`1`, style=`text-align: center; justify-content: center;`)
-      thead
-        tr
-          th ID
-          th Nome
-          th Email
-          th Cargo
-          th Dept.
-          th Ações
-      tbody
-        each user in users
+  div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
+    if users.length > 0
+      table.min-w-full.divide-y.divide-gray-200
+        thead.bg-gray-50
           tr
-            td= user.id
-            td= user.name
-            td= user.email
-            td= user.role
-            td= user.department_name
-            td
-              a(href=`/users/${user.id}`, style=`text-decoration: none;`) 👁
-              |  | 
-              a(href=`/users/${user.id}/edit`, style=`text-decoration: none;`) ✎
-              |  | 
-              form(action=`/users/${user.id}?_method=DELETE`, method="POST", style="display:inline")  
-                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este utilizador?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
-  else
-    p Não há utilizadores registados.
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase ID
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Nome / Email
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Cargo
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Departamento
+            th.px-6.py-3.text-right.text-xs.font-bold.text-gray-500.uppercase Ações
+        
+        tbody.bg-white.divide-y.divide-gray-200
+          each u in users
+            tr
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 ##{u.id}
+              
+              td.px-6.py-4.whitespace-nowrap
+                div.text-sm.font-medium.text-gray-900 #{u.name}
+                div.text-sm.text-gray-500 #{u.email}
+              
+              td.px-6.py-4.whitespace-nowrap
+                if u.role == 'manager'
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-purple-100.text-purple-800 Manager
+                else
+                  span.px-2.py-1.text-xs.font-bold.rounded-full.bg-blue-100.text-blue-800 Employee
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500
+                if u.department_name
+                  | #{u.department_name}
+                else
+                  span.text-gray-400 - Sem Dept -
+
+              td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
+                a(href=`/users/${u.id}` class="text-gray-400 hover:text-blue-600 mr-3" title="Ver Detalhes")
+                  i.fa-solid.fa-eye
+                
+                a(href=`/users/${u.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3" title="Editar")
+                  i.fa-solid.fa-pen
+                
+                form(action=`/users/${u.id}?_method=DELETE` method="POST" class="inline-block")
+                  button(type="submit" class="text-red-600 hover:text-red-900" title="Apagar" onclick="return confirm('Tem a certeza?')")
+                    i.fa-solid.fa-trash
+    else
+      div.p-12.text-center
+        p.text-gray-500 Não existem utilizadores registados.

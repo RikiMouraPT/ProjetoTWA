@@ -1,31 +1,48 @@
 extends ../layouts/app
 
 block content
-  h1 Lista de Departamentos
+  div.flex.justify-between.items-center.mb-6
+    h1.text-2xl.font-bold.text-gray-900 Departamentos
+    
+    a(href="/departments/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
+      | Novo Departamento
 
-  p 
-    a(href=`/departments/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Departamento
-
-  if departments.length
-    table(border=`1`, style=`text-align: center; justify-content: center;`)
-      thead
-        tr
-          th ID
-          th Nome
-          th Manager ID
-          th Ações
-      tbody
-        each department in departments
+  div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
+    if departments.length > 0
+      table.min-w-full.divide-y.divide-gray-200
+        thead.bg-gray-50
           tr
-            td= department.id
-            td= department.name
-            td= department.manager_name
-            td
-              a(href=`/departments/${department.id}`, style=`text-decoration: none;`) 👁
-              |  | 
-              a(href=`/departments/${department.id}/edit`, style=`text-decoration: none;`) ✎
-              |  | 
-              form(action=`/departments/${department.id}?_method=DELETE`, method="POST", style="display:inline")  
-                button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este utilizador?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
-  else
-    p Não há departamentos registados.
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase ID
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Nome
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Gerente
+            th.px-6.py-3.text-right.text-xs.font-bold.text-gray-500.uppercase Ações
+        
+        tbody.bg-white.divide-y.divide-gray-200
+          each dept in departments
+            tr
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 ##{dept.id}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 #{dept.name}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500
+                if dept.manager_name
+                  div.flex.items-center
+                    div.flex-shrink-0.h-8.w-8.rounded-full.bg-purple-100.flex.items-center.justify-center.text-purple-600.mr-2
+                      i.fa-solid.fa-user-tie.text-xs
+                    span #{dept.manager_name}
+                else
+                  span.text-gray-400 - Sem Gerente -
+
+              td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
+                a(href=`/departments/${dept.id}` class="text-gray-400 hover:text-blue-600 mr-3" title="Ver Detalhes")
+                  i.fa-solid.fa-eye
+                
+                a(href=`/departments/${dept.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3" title="Editar")
+                  i.fa-solid.fa-pen
+                
+                form(action=`/departments/${dept.id}?_method=DELETE` method="POST" class="inline-block")
+                  button(type="submit" class="text-red-600 hover:text-red-900" title="Apagar" onclick="return confirm('Tem a certeza que deseja apagar este departamento?')")
+                    i.fa-solid.fa-trash
+    else
+      div.p-12.text-center
+        p.text-gray-500 Não existem departamentos registados.

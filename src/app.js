@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 
+const dashboardController = require('./controllers/dashboardController');
 const userRoutes = require('./routes/userRoutes');
 const vacationRoutes = require('./routes/vacationRoutes');
 const leaveTypeRoutes = require('./routes/leaveTypeRoutes');
@@ -30,14 +31,19 @@ app.use(session({
 
 // Utilizador fica disponivel em todas as views
 app.use((req, res, next) => {
-    res.locals.currentUser = req.session.user;
+    res.locals.user = req.session.user;
     next();
 });
 
 app.get('/', (req, res) => {
-    res.render('welcome', { title: 'Home'});
+    if (req.session.user) {
+        return res.redirect('/dashboard');
+    }
+    else {
+        res.render('welcome');
+    }
 });
-
+app.get('/dashboard', dashboardController.index);
 app.use('/', authRoutes);
 app.use('/users', userRoutes);
 app.use('/vacations', vacationRoutes);

@@ -1,25 +1,39 @@
 extends ../layouts/app
 
 block content
-  h1 Detalhe Férias - #{vacation.id}
-  
-  table(border=`1`, style=`text-align: center; justify-content: center;`)
-    thead
-      tr
-        th ID
-        th User ID
-        th Tipo de Férias
-        th Início
-        th Fim
-        th Estado
-    tbody
-      tr
-        td= vacation.id
-        td= vacation.user_name
-        td= vacation.leave_type_name
-        td= new Date(vacation.start_date).toLocaleDateString()
-        td= new Date(vacation.end_date).toLocaleDateString()
-        td= vacation.status
-  
-  hr
-  a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.overflow-hidden
+      
+      div.px-6.py-5.border-b.border-gray-200.flex.justify-between.items-center
+        h3.text-lg.leading-6.font-medium.text-gray-900 Detalhes do Pedido ##{vacation.id}
+        
+        // Badge de Estado
+        if vacation.status == 'approved'
+          span.px-2.py-1.text-xs.font-bold.rounded-full.bg-green-100.text-green-800 Aprovado
+        else if vacation.status == 'rejected'
+          span.px-2.py-1.text-xs.font-bold.rounded-full.bg-red-100.text-red-800 Rejeitado
+        else
+          span.px-2.py-1.text-xs.font-bold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
+
+      div.border-t.border-gray-200
+        dl
+          div.bg-gray-50.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Utilizador
+            dd.mt-1.text-sm.text-gray-900.col-span-2 #{vacation.user_name}
+          
+          div.bg-white.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Tipo de Férias
+            dd.mt-1.text-sm.text-gray-900.col-span-2 #{vacation.leave_type_name}
+          
+          div.bg-gray-50.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Data de Início
+            dd.mt-1.text-sm.text-gray-900.col-span-2 #{new Date(vacation.start_date).toLocaleDateString()}
+          
+          div.bg-white.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Data de Fim
+            dd.mt-1.text-sm.text-gray-900.col-span-2 #{new Date(vacation.end_date).toLocaleDateString()}
+
+      div.px-6.py-4.bg-gray-50.border-t.border-gray-200
+        a(href="/vacations" class="text-blue-600 hover:text-blue-900 font-medium text-sm")
+          i.fa-solid.fa-arrow-left.mr-1
+          | Voltar à lista

@@ -1,20 +1,33 @@
 extends ../layouts/app
 
 block content
-  h1 Detalhe do Departamento de/a #{department.name}
-  
-  table(border=`1`, style=`text-align: center; justify-content: center;`)
-    thead
-      tr
-        th ID
-        th Nome
-        th Manager
-    tbody
-      tr
-        td= department.id
-        td= department.name
-        td= department.manager_name
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      
+      div.px-6.py-5.border-b.border-gray-200.flex.justify-between.items-center
+        h3.text-lg.font-bold.text-gray-900 Detalhes do Departamento
+        
+        a(href=`/departments/${department.id}/edit` class="text-sm font-medium text-blue-600 hover:text-blue-800")
+          i.fa-solid.fa-pen.mr-1
+          | Editar
 
-  hr
-  a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ⮜ Voltar
-  a(href=`/departments/${department.id}/edit`, style=`text-decoration:none; border: 1px solid black; padding: 5px`) ✎ Editar
+      div.border-t.border-gray-200
+        dl
+          div.bg-gray-50.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Nome
+            dd.mt-1.text-sm.text-gray-900.col-span-2 #{department.name}
+          
+          div.bg-white.px-6.py-4.grid.grid-cols-3.gap-4
+            dt.text-sm.font-medium.text-gray-500 Gerente Atual
+            dd.mt-1.text-sm.text-gray-900.col-span-2
+              if department.manager_name
+                div.flex.items-center
+                  i.fa-solid.fa-user-tie.text-gray-400.mr-2
+                  span #{department.manager_name}
+              else
+                span.text-gray-400 - Nenhum atribuído -
+
+      div.px-6.py-4.bg-gray-50.border-t.border-gray-200
+        a(href="/departments" class="text-blue-600 hover:text-blue-900 font-medium text-sm")
+          i.fa-solid.fa-arrow-left.mr-1
+          | Voltar à lista

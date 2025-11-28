@@ -1,19 +1,26 @@
 extends ../layouts/app
 
 block content
-  h1 Editar: #{leaveType.name}
-  
-  form(action=`/leave-types/${leaveType.id}?_method=PUT` method=`POST`)
-    div
-      label Nome: 
-      input(type=`text` name=`name` value=leaveType.name required)
-    div
-      label Descrição: 
-      textarea(name=`description`)= leaveType.description
-    div
-      label Máx Dias: 
-      input(type=`number` name=`max_days` value=leaveType.max_days required)
-    
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Editar: #{leaveType.name}
+      
+      div.p-6
+        form(action=`/leave-types/${leaveType.id}?_method=PUT` method="POST" class="space-y-6")
+          
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome
+            input(type="text" name="name" id="name" value=leaveType.name required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="description" class="block text-sm font-medium text-gray-700") Descrição
+            textarea(name="description" id="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")= leaveType.description
+
+          div
+            label(for="max_days" class="block text-sm font-medium text-gray-700") Máximo de Dias (Anual)
+            input(type="number" name="max_days" id="max_days" value=leaveType.max_days class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div.flex.justify-end.pt-4
+            a(href="/leave-types" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3") Cancelar
+            button(type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm") Atualizar

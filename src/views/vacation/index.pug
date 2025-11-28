@@ -1,56 +1,91 @@
 extends ../layouts/app
 
 block content
-  h1 Pedidos de Férias
-  
-  if currentUser && currentUser.role == "employee"
-    p
-      a(href=`/vacations/create`, style=`border: 1px solid black; border-radius: 5px; padding: 5px 10px; text-decoration: none;`) + Novo Pedido
+  div.flex.justify-between.items-center.mb-6
+    h1.text-2xl.font-bold.text-gray-900 Pedidos de Férias
+    
+    a(href="/vacations/create").inline-flex.items-center.px-4.py-2.bg-blue-600.text-white.text-sm.font-medium.rounded-md.shadow-sm
+      i.fa-solid.fa-plus.mr-2
+      | Novo Pedido
 
-  if vacations.length
-    table(border=`1`, style=`text-align: center; justify-content: center;`)
-      thead
-        tr
-          th ID
-          if currentUser && currentUser.role == "manager"
-            th User
-          th Tipo
-          th Início
-          th Fim
-          th Estado
-          th Ações
-          if currentUser && currentUser.role == "manager"
-            th Ações Manager
-      tbody
-        each vacation in vacations
+  // --- BARRA DE FILTROS ---
+  div.mb-6.flex.space-x-2
+    
+    if viewUserId
+      // APENAS USERS VÊEM ESTA BARRA DE FILTROS
+      a(href=`/vacations/byUser/${viewUserId}` class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+        | Todos
+      
+      a(href=`/vacations/byUser/${viewUserId}?filter=pending` class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+        | Apenas Pendentes
+
+    else
+      //APENAS MANAGER VÊ ESTA BARRA DE FILTROS
+      if user && user.role == 'manager'
+        a(href="/vacations?filter=my_dept" class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter || currentFilter == 'my_dept' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`)
+          | Todos do Departamento
+        
+        a(href="/vacations?filter=my_dept_pending" class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'my_dept_pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+          | Pendentes do Departamento
+
+  // --- TABELA ---
+  div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
+    if vacations.length > 0
+      table.min-w-full.divide-y.divide-gray-200
+        thead.bg-gray-50
           tr
-            td= vacation.id
-            if currentUser && currentUser.role == "manager"
-              td= vacation.user_name
-            td= vacation.leave_type_name
-            td= new Date(vacation.start_date).toLocaleDateString()
-            td= new Date(vacation.end_date).toLocaleDateString()
-            td= vacation.status
-            td
-              a(href=`/vacations/${vacation.id}`, style=`text-decoration: none;`) 👁
-              if vacation.status == "pending" && currentUser && currentUser.role == "employee" && vacation.user_id == currentUser.id
-                |  | 
-                a(href=`/vacations/${vacation.id}/edit`, style=`text-decoration: none;`) ✎
-                |  | 
-                form(action=`/vacations/${vacation.id}?_method=DELETE`, method="POST", style="display:inline")  
-                  button(type="submit", onclick="return confirm('Tem a certeza que deseja eliminar este pedido de férias?');", style="background:none; border:none; color:blue; cursor:pointer;") ✖
-            if currentUser && currentUser.role == "manager"
-              td
-                if vacation.status == "pending"
-                  form(action=`/vacations/${vacation.id}/accept?_method=PUT`, method="POST", style="display:inline")  
-                    button(type="submit", style="background:none; border:none; color:green; cursor:pointer;") ✔ Aprovar
-                  |  | 
-                  form(action=`/vacations/${vacation.id}/reject?_method=PUT`, method="POST", style="display:inline")  
-                    button(type="submit", style="background:none; border:none; color:red; cursor:pointer;") ✘ Rejeitar
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase ID
+            if user && user.role == "manager"
+              th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase User
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Tipo
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Datas
+            th.px-6.py-3.text-left.text-xs.font-bold.text-gray-500.uppercase Estado
+            th.px-6.py-3.text-right.text-xs.font-bold.text-gray-500.uppercase Ações
+        
+        tbody.bg-white.divide-y.divide-gray-200
+          each v in vacations
+            tr
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 ##{v.id}
+              
+              if user && user.role == "manager"
+                td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 #{v.user_name}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 #{v.leave_type_name}
+              
+              td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500
+                div De: #{new Date(v.start_date).toLocaleDateString()}
+                div Até: #{new Date(v.end_date).toLocaleDateString()}
+              
+              td.px-6.py-4.whitespace-nowrap
+                if v.status == 'approved'
+                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-green-100.text-green-800 Aprovado
+                else if v.status == 'rejected'
+                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-red-100.text-red-800 Rejeitado
                 else
-                  if vacation.status == "approved"
-                    span(style="color:green;") ✔ Aprovado
-                  else if vacation.status == "rejected"
-                    span(style="color:red;") ✘ Rejeitado
-  else
-    p Sem pedidos.
+                  span.px-2.inline-flex.text-xs.leading-5.font-semibold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
+              
+              td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
+                a(href=`/vacations/${v.id}` class="text-gray-400 hover:text-blue-600 mr-3")
+                  i.fa-solid.fa-eye
+
+                // Ações do Dono
+                if v.status == "pending" && user && (user.role == "employee" && v.user_id == user.id || user.id == v.user_id)
+                  a(href=`/vacations/${v.id}/edit` class="text-blue-600 hover:text-blue-900 mr-3")
+                    i.fa-solid.fa-pen
+                  
+                  form(action=`/vacations/${v.id}?_method=DELETE` method="POST" class="inline-block")
+                    button(type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apagar pedido?')")
+                      i.fa-solid.fa-trash
+
+                // Ações do Manager (Aprovar/Rejeitar) - Só para outros users
+                if user && user.role == "manager" && v.status == "pending" && v.user_id != user.id
+                  form(action=`/vacations/${v.id}/accept?_method=PUT` method="POST" class="inline-block mr-2")
+                    button(type="submit" class="text-green-600 hover:text-green-900 font-bold")
+                      i.fa-solid.fa-check
+                  
+                  form(action=`/vacations/${v.id}/reject?_method=PUT` method="POST" class="inline-block")
+                    button(type="submit" class="text-red-600 hover:text-red-900 font-bold")
+                      i.fa-solid.fa-xmark
+    else
+      div.p-12.text-center
+        p.text-gray-500 Não existem pedidos para este filtro.

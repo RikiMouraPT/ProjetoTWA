@@ -1,21 +1,45 @@
 extends ../layouts/app
 
 block content
-  h1 Novo Pedido de Férias
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      
+      // Cabeçalho
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Novo Pedido de Férias
+        p.text-sm.text-gray-500 Preenche os detalhes abaixo.
 
-  form(action=`/vacations` method=`POST`)
-    div
-      label Tipo de Férias: 
-      select(name=`leave_type_id` required)
-        each leaveType in leaveTypes
-          option(value=leaveType.id)= leaveType.name
-    div
-      label Início: 
-      input(type=`date` name=`start_date` required)
-    div
-      label Fim: 
-      input(type=`date` name=`end_date` required)
+      div.p-6
+        form(action="/vacations" method="POST" class="space-y-6")
+        
+          // Tipo de Férias
+          div
+            label(for="leave_type_id" class="block text-sm font-medium text-gray-700") Tipo de Férias
+            select(name="leave_type_id" id="leave_type_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+              option(value="" disabled selected) -- Seleciona um tipo --
+              if leaveTypes
+                each type in leaveTypes
+                  option(value=type.id)= type.name
+              else
+                option(value="" disabled) Erro: Nenhum tipo carregado
 
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✚ Férias
+          div.grid.grid-cols-2.gap-6
+            // Data Início
+            div
+              label(for="start_date" class="block text-sm font-medium text-gray-700") Data de Início
+              input(type="date" name="start_date" id="start_date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+            
+            // Data Fim
+            div
+              label(for="end_date" class="block text-sm font-medium text-gray-700") Data de Fim
+              input(type="date" name="end_date" id="end_date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          // Botões de Ação
+          div.flex.justify-end.pt-4
+            // Botão Cancelar (Voltar)
+            a(href="/vacations" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3 transition") Cancelar
+            
+            // Botão Submeter
+            button(type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm transition")
+              i.fa-solid.fa-plus.mr-2
+              | Submeter Pedido

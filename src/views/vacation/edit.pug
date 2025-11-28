@@ -1,26 +1,38 @@
 extends ../layouts/app
 
 block content
-  h1 Editar Pedido ##{vacation.id}
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Editar Pedido ##{vacation.id}
+        p.text-sm.text-gray-500 Altera os detalhes do teu pedido pendente.
 
-  form(action=`/vacations/${vacation.id}?_method=PUT` method=`POST`)
-    div
-      label Tipo : 
-      select(name=`leave_type_id` required)
-        each leaveType in leaveTypes
-          if leaveType.id == vacation.leave_type_id
-            option(value=leaveType.id selected)= leaveType.name
-          else
-            option(value=leaveType.id)= leaveType.name
-    div
-      label Início: 
-      - var start = vacation.start_date ? new Date(vacation.start_date).toISOString().split('T')[0] : ''
-      input(type=`date` name=`start_date` value=start required)
-    div
-      label Fim: 
-      - var end = vacation.end_date ? new Date(vacation.end_date).toISOString().split('T')[0] : ''
-      input(type=`date` name=`end_date` value=end required)
-    
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter
+      div.p-6
+        // Form com Method Override para PUT
+        form(action=`/vacations/${vacation.id}?_method=PUT` method="POST" class="space-y-6")
+          
+          div
+            label(for="leave_type_id" class="block text-sm font-medium text-gray-700") Tipo de Férias
+            select(name="leave_type_id" id="leave_type_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+              each type in leaveTypes
+                // Seleciona automaticamente o tipo atual
+                option(value=type.id selected=(type.id == vacation.leave_type_id))= type.name
+
+          div.grid.grid-cols-2.gap-6
+            div
+              label(for="start_date" class="block text-sm font-medium text-gray-700") Data de Início
+              // Formatar data para YYYY-MM-DD
+              - var start = vacation.start_date ? new Date(vacation.start_date).toISOString().split('T')[0] : ''
+              input(type="date" name="start_date" id="start_date" value=start required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+            
+            div
+              label(for="end_date" class="block text-sm font-medium text-gray-700") Data de Fim
+              - var end = vacation.end_date ? new Date(vacation.end_date).toISOString().split('T')[0] : ''
+              input(type="date" name="end_date" id="end_date" value=end required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div.flex.justify-end.pt-4
+            a(href="/vacations" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3 transition") Cancelar
+            button(type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm transition")
+              i.fa-solid.fa-check.mr-2
+              | Atualizar Pedido

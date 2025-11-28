@@ -1,22 +1,26 @@
 extends ../layouts/app
 
 block content
-  h1 Editar #{department.name}
-  
-  form(action=`/departments/${department.id}?_method=PUT` method=`POST`)
-    div
-      label Nome: 
-      input(type=`text` name=`name` value=department.name required)
-    div
-      label Gerente:
-      select(name=`manager_id` required)
-        option(value=``) -- Selecionar Gerente --
-        each user in managers
-          if user.id == department.manager_id
-            option(value=`${user.id}` selected)= `${user.name} (ID: ${user.id})`
-          else
-            option(value=`${user.id}`)= `${user.name} (ID: ${user.id})`
-    
-    hr 
-    a(href=`javascript:history.back()`, style=`text-decoration:none; border: 1px solid black; padding: 5px; margin-right: 5px;`) ⮜ Voltar
-    button(type=`submit`, style=`text-decoration:none; border: 1px solid black; padding: 5px;`) ✔ Submeter
+  div.max-w-2xl.mx-auto
+    div.bg-white.shadow.rounded-lg.border.border-gray-200.overflow-hidden
+      div.px-6.py-4.border-b.border-gray-200
+        h3.text-lg.font-bold.text-gray-900 Editar: #{department.name}
+      
+      div.p-6
+        form(action=`/departments/${department.id}?_method=PUT` method="POST" class="space-y-6")
+          
+          div
+            label(for="name" class="block text-sm font-medium text-gray-700") Nome do Departamento
+            input(type="text" name="name" id="name" value=department.name required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+
+          div
+            label(for="manager_id" class="block text-sm font-medium text-gray-700") Gerente
+            select(name="manager_id" id="manager_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
+              option(value="" selected=(department.manager_id == null)) -- Nenhum --
+              if managers
+                each m in managers
+                  option(value=m.id selected=(m.id == department.manager_id))= m.name
+
+          div.flex.justify-end.pt-4
+            a(href="/departments" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3") Cancelar
+            button(type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 shadow-sm") Atualizar

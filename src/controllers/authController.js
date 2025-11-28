@@ -61,7 +61,7 @@ function login(req, res) {
                     role: user.role,
                     department_id: user.department_id
                 };
-                res.redirect('/');
+                res.redirect('/dashboard');
             } else {
                 res.redirect('/login');
             }
