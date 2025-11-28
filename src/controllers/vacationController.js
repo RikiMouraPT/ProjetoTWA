@@ -40,7 +40,6 @@ function index(req, res) {
     });
 }
 
-// Mostra apenas as férias de um utilizador específico
 function indexByUser(req, res) {
     const userId = req.params.userId;
     const loggedInUser = req.session.user;
@@ -51,6 +50,12 @@ function indexByUser(req, res) {
         return res.status(403).render('errors/403');
     }
 
+    let whereClause = "";
+    // Filtro
+    if (filter === 'pending') {
+        whereClause += " AND v.status = 'pending'";
+    }
+
     const sql = `
         SELECT 
             v.id, v.start_date, v.end_date, v.status, v.user_id,
@@ -58,6 +63,7 @@ function indexByUser(req, res) {
         FROM vacations v
         JOIN leave_types lt ON v.leave_type_id = lt.id
         WHERE v.user_id = ${userId}
+        ${whereClause}
         ORDER BY v.start_date DESC`;
 
     executeSQL(sql, (error, results) => {

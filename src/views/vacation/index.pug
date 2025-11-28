@@ -4,19 +4,20 @@ block content
   div.flex.justify-between.items-center.mb-6
     h1.text-2xl.font-bold.text-gray-900 Gestão de Departamento
     
-    // Atalho para ver as minhas próprias férias (como manager também tem férias)
+    // Link rápido para o manager ver as suas próprias férias
     a(href=`/vacations/byUser/${user.id}`).text-blue-600
       | Ver as minhas férias &rarr;
 
-  // --- FILTROS DE DEPARTAMENTO ---
+  // --- FILTROS ---
   div.mb-6.flex.space-x-2
-    a(href="/vacations" class=`px-4 py-2 rounded-md text-sm font-medium border ${!currentFilter ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+  
+    a(href="/vacations" class=`px-4 py-2 rounded-md text-sm font-medium border transition ${!currentFilter ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
       | Todos do Departamento
     
-    a(href="/vacations?filter=pending" class=`px-4 py-2 rounded-md text-sm font-medium border ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
-      | Apenas Pendentes
+    a(href="/vacations?filter=pending" class=`px-4 py-2 rounded-md text-sm font-medium border transition ${currentFilter == 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 ring-1 ring-yellow-300' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`) 
+      | Pendentes
 
-  // --- TABELA DE GESTÃO ---
+  // --- TABELA ---
   div.bg-white.shadow.overflow-hidden.border.border-gray-200.rounded-lg
     if vacations.length > 0
       table.min-w-full.divide-y.divide-gray-200
@@ -53,8 +54,7 @@ block content
                   span.px-2.py-1.text-xs.font-bold.rounded-full.bg-yellow-100.text-yellow-800 Pendente
               
               td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
-                // Botões de Decisão (Só se for pendente e não for eu próprio)
-                if v.status == "pending" && v.user_id != user.id
+                if v.status == "pending"
                   form(action=`/vacations/${v.id}/accept?_method=PUT` method="POST" class="inline-block mr-2")
                     button(type="submit" class="text-green-600 hover:text-green-900 font-bold" title="Aprovar")
                       i.fa-solid.fa-check
@@ -66,4 +66,4 @@ block content
                   span.text-gray-400 -
     else
       div.p-12.text-center
-        p.text-gray-500 Não existem pedidos para mostrar neste filtro.
+        p.text-gray-500 Não existem pedidos para este filtro.
