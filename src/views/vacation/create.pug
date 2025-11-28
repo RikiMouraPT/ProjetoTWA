@@ -11,15 +11,18 @@ block content
 
       div.p-6
         form(action="/vacations" method="POST" class="space-y-6")
-        
+          
           // Tipo de Férias
           div
             label(for="leave_type_id" class="block text-sm font-medium text-gray-700") Tipo de Férias
+            // AQUI ESTÃO OS ESTILOS CORRIGIDOS (tinhas class="...")
             select(name="leave_type_id" id="leave_type_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")
               option(value="" disabled selected) -- Seleciona um tipo --
               if leaveTypes
                 each type in leaveTypes
-                  option(value=type.id)= type.name
+                  // Lógica para mostrar dias restantes
+                  - var remaining = type.max_days ? (type.max_days - type.days_used) : 'Ilimitado'
+                  option(value=type.id) #{type.name} (Restam: #{remaining})
               else
                 option(value="" disabled) Erro: Nenhum tipo carregado
 

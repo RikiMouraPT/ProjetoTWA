@@ -1,0 +1,28 @@
+extends ../layouts/app
+
+block content
+  div.flex.flex-col.items-center.justify-center.py-16
+    
+    // Ícone de Aviso (Mão ou Proibido)
+    div.bg-red-100.p-6.rounded-full.mb-6
+      i.fa-solid.fa-hand.text-red-600.text-5xl
+
+    // Título
+    h1.text-3xl.font-bold.text-gray-900.mb-2 Pedido Não Aceite
+    
+    // Mensagem de Erro (Passada pelo Controller)
+    div.bg-white.p-6.rounded-lg.shadow-sm.border.border-red-200.max-w-md.text-center.mb-8
+      p.text-gray-700.text-lg.font-medium Ups! Não tens dias suficientes.
+      
+      div.mt-4.space-y-2.text-sm.text-gray-600
+        p Estás a tentar pedir: <span class="font-bold text-gray-900">#{daysRequested} dias</span>
+        p Só tens disponíveis: <span class="font-bold text-gray-900">#{daysRemaining} dias</span>
+        
+        if limit
+          p.text-xs.text-gray-400 (O teu limite total é de #{limit} dias para este tipo de férias)
+
+    // Botões de Ação
+    div.flex.space-x-4
+      a(href="javascript:history.back()").inline-flex.items-center.px-6.py-3.bg-white.border.border-gray-300.text-base.font-medium.rounded-md.text-gray-700
+        i.fa-solid.fa-arrow-left.mr-2
+        | Voltar e Corrigir

@@ -84,7 +84,20 @@ function indexByUser(req, res) {
 
 function create(req, res) {
     const user = req.session.user;
-    const sql = `SELECT id, name FROM leave_types`;
+    
+    // Esta query vai buscar os tipos E calcula quanto o user já gastou de cada um
+    const sql = `
+        SELECT 
+            lt.id, 
+            lt.name, 
+            lt.max_days,
+            COALESCE(SUM(DATEDIFF(v.end_date, v.start_date) + 1), 0) as days_used
+        FROM leave_types lt
+        LEFT JOIN vacations v ON v.leave_type_id = lt.id 
+            AND v.user_id = ${user.id} 
+            AND v.status != 'rejected' -- Contamos os pendentes também!
+        GROUP BY lt.id
+    `;
 
     executeSQL(sql, (error, results) => {
         if (error) {
@@ -96,32 +109,70 @@ function create(req, res) {
 }
 
 function store(req, res) {
-    const {start_date, end_date, leave_type_id } = req.body;
-    if (!start_date || !end_date || !leave_type_id) {
-        res.status(400).send({ error: 'Dia de início, dia de término, tipo de férias são obrigatórios' });
-        return;
-    }
+    const { start_date, end_date, leave_type_id } = req.body;
     const user = req.session.user;
-    const sql = `
-        INSERT INTO vacations 
-            (user_id, 
-            start_date, 
-            end_date, 
-            leave_type_id, 
-            created_at) 
-        VALUES 
-            (${user.id}, 
-            '${start_date}', 
-            '${end_date}', 
-            ${leave_type_id}, 
-            NOW())`;
 
-    executeSQL(sql, (error, results) => {
-        if (error) {
-            res.status(500).send(error.message);
-        } else {
-            res.redirect('/');
+    if (!start_date || !end_date || !leave_type_id) {
+        return res.status(400).send('Erro: Todos os campos são obrigatórios.');
+    }
+
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+    
+    // Diferença em milissegundos convertida para dias
+    const diffTime = Math.abs(end - start);
+    const daysRequested = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+
+    // Validar que as datas fazem sentido
+    if (daysRequested <= 0 || end < start) {
+        return res.status(400).send('Erro: A data de fim tem de ser depois da data de início.');
+    }
+
+    // Verificar 'saldo' na Base de Dados
+    // Confirmar quanto já foi gasto deste tipo específico
+    const sqlCheck = `
+        SELECT 
+            lt.max_days,
+            COALESCE(SUM(DATEDIFF(v.end_date, v.start_date) + 1), 0) as days_used
+        FROM leave_types lt
+        LEFT JOIN vacations v ON v.leave_type_id = lt.id 
+            AND v.user_id = ${user.id} 
+            AND v.status != 'rejected'
+        WHERE lt.id = ${leave_type_id}
+        GROUP BY lt.id
+    `;
+
+    executeSQL(sqlCheck, (err, results) => {
+        if (err) return res.status(500).send(err.message);
+        
+        if (results.length === 0) return res.status(404).send('Tipo de férias inválido.');
+
+        const limit = results[0].max_days;
+        const used = parseFloat(results[0].days_used);
+
+        // Se 'limit' for NULL, significa que é ilimitado (ex: baixa médica sem limite configurado)
+        if (limit !== null) {
+            const remaining = limit - used;
+            
+            if (daysRequested > remaining) {
+                return res.status(400).render('errors/declineVacation', { 
+                    message: `Erro: Não tem dias suficientes deste tipo de férias. Restam ${remaining} dias.`,
+                    daysRequested: daysRequested,
+                    daysRemaining: remaining,
+                    limit: limit
+                });
+            }
         }
+
+        const sqlInsert = `
+            INSERT INTO vacations (user_id, start_date, end_date, leave_type_id, created_at) 
+            VALUES (${user.id}, '${start_date}', '${end_date}', ${leave_type_id}, NOW())
+        `;
+
+        executeSQL(sqlInsert, (err2, result) => {
+            if (err2) return res.status(500).send(err2.message);
+            res.redirect(`/vacations/byUser/${user.id}`);
+        });
     });
 }
 
