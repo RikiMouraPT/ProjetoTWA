@@ -25,15 +25,15 @@ function index(req, res) {
 
 function create(req, res) {
     const sql = `
-    SELECT 
-        id, 
-        name 
-        FROM 
-        users 
-    WHERE 
-        role = 'manager' 
-    ORDER BY 
-        name`;
+        SELECT 
+            id, 
+            name 
+            FROM 
+            users 
+        WHERE 
+            role = 'manager' 
+        ORDER BY 
+            name`;
 
     executeSQL(sql, (error, results) => {
         if (error) {
