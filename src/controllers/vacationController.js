@@ -321,6 +321,7 @@ function accept(req, res) {
         }
     });
 }
+
 function reject(req, res) {
     const id = req.params.id;
 
