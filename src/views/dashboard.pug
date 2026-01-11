@@ -30,12 +30,11 @@ block content
         p.text-2xl.font-bold.text-gray-900 #{stats ? stats.countApproved : 0}
 
       // Card 3: Gozadas (Dias ou Count)
-      // Estou a mostrar Dias Gozados Totais
       div.bg-white.p-5.rounded-xl.shadow.border.border-gray-200.text-center
         div.text-purple-600.mb-2
           i.fa-solid.fa-plane-arrival.text-3xl
         p.text-sm.text-gray-500.font-medium Gozadas
-        p.text-2xl.font-bold.text-gray-900 #{stats ? stats.daysUsed : 0}
+        p.text-2xl.font-bold.text-gray-900 #{stats ? stats.daysPast : 0}
           span.text-xs.text-gray-400.ml-1 dias
 
       // Card 4: Pending (Count)

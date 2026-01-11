@@ -5,81 +5,79 @@ function index(req, res) {
         return res.render('welcome');
     }
 
-    const user = req.session.user;
+    const userId = req.session.user.id;
 
-    const sqlTypes = `SELECT * FROM leave_types`;
-    
-    const sqlVacations = `
-        SELECT v.*, lt.max_days, lt.name as type_name
+    const sqlStats = `
+        SELECT
+            COALESCE(SUM(
+                CASE 
+                    WHEN v.status = 'approved'
+                    THEN DATEDIFF(v.end_date, v.start_date) + 1
+                    ELSE 0
+                END
+            ), 0) AS daysUsed,
+
+            COALESCE(SUM(
+                CASE
+                    WHEN v.status = 'approved'
+                    AND v.end_date < CURDATE()
+                    THEN DATEDIFF(v.end_date, v.start_date) + 1
+                    ELSE 0
+                END
+            ), 0) AS daysPast,
+
+            COUNT(CASE WHEN v.status = 'approved' THEN 1 END) AS countApproved,
+            COUNT(CASE WHEN v.status = 'pending' THEN 1 END) AS countPending
         FROM vacations v
-        JOIN leave_types lt ON v.leave_type_id = lt.id
-        WHERE v.user_id = ${user.id}
+        WHERE v.user_id = ${userId}
     `;
 
-    executeSQL(sqlTypes, (err, allTypes) => {
+
+    const sqlTotalDays = `
+        SELECT COALESCE(SUM(max_days), 0) AS daysTotal
+        FROM leave_types
+    `;
+
+    const sqlByType = `
+        SELECT
+            lt.id,
+            lt.name,
+            lt.max_days,
+            COALESCE(SUM(
+                CASE
+                    WHEN v.status = 'approved'
+                    THEN DATEDIFF(v.end_date, v.start_date) + 1
+                    ELSE 0
+                END
+            ), 0) AS days_used
+        FROM leave_types lt
+        LEFT JOIN vacations v
+            ON v.leave_type_id = lt.id
+        AND v.user_id = ${userId}
+        GROUP BY lt.id, lt.name, lt.max_days
+    `;
+
+
+    executeSQL(sqlTotalDays, (err, totalResult) => {
         if (err) return res.render('dashboard', { error: 'Erro BD' });
 
-        executeSQL(sqlVacations, (err2, userVacations) => {
+        executeSQL(sqlStats, (err2, statsResult) => {
             if (err2) return res.render('dashboard', { error: 'Erro BD' });
-            
-            //Total de Dias a que tenho direito (Soma dos max_days de todos os tipos)
-            let totalDaysAllowed = 0;
-            allTypes.forEach(t => totalDaysAllowed += (t.max_days || 0));
 
-            //Dias Gozados (Soma dos dias dos pedidos 'approved')
-            let daysUsed = 0;
-            
-            //Contagens de Pedidos
-            let countApproved = 0;
-            let countPending = 0;
-            let countPast = 0; // Gozadas
+            executeSQL(sqlByType, (err3, byTypeResult) => {
+                if (err3) return res.render('dashboard', { error: 'Erro BD' });
 
-            const now = new Date();
+                const stats = {
+                    daysUsed: statsResult[0].daysUsed,
+                    daysPast: statsResult[0].daysPast,
+                    countApproved: statsResult[0].countApproved,
+                    countPending: statsResult[0].countPending,
+                    daysTotal: totalResult[0].daysTotal,
+                    byType: byTypeResult
+                };
 
-            userVacations.forEach(v => {
-                const start = new Date(v.start_date);
-                const end = new Date(v.end_date);
-                // +1 porque se for dia 1 a 1 conta como 1 dia
-                const duration = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-                if (v.status === 'approved') {
-                    daysUsed += duration;
-                    countApproved++;
-                    
-                    // Se a data de fim já passou, consideramos "Gozada" (passado)
-                    if (end < now) {
-                        countPast++;
-                    }
-                } else if (v.status === 'pending') {
-                    countPending++;
-                }
+                res.render('dashboard', { stats });
             });
-
-            // Preparar dados para a view
-            const stats = {
-                daysUsed: daysUsed,
-                daysTotal: totalDaysAllowed,
-                countApproved: countApproved,
-                countPending: countPending,
-                countPast: countPast,
-                
-                byType: allTypes.map(t => {
-                    const vacsOfType = userVacations.filter(v => v.leave_type_id === t.id && v.status === 'approved');
-                    const usedOfType = vacsOfType.reduce((acc, v) => {
-                        const s = new Date(v.start_date);
-                        const e = new Date(v.end_date);
-                        return acc + (Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1);
-                    }, 0);
-                    
-                    return {
-                        name: t.name,
-                        max_days: t.max_days,
-                        days_used: usedOfType
-                    };
-                })
-            };
-
-            res.render('dashboard', { stats: stats });
         });
     });
 }
