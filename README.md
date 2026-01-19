@@ -40,12 +40,12 @@ Leavely é uma aplicação de gestão interna de utilizadores e férias para emp
 
 * **Node.js** – Ambiente de execução do JavaScript no servidor.
 * **Express.js** – Framework para construção de APIs e servidores HTTP.
-* **MongoDB/MySQL/PostgreSQL** – Base de dados para armazenamento dos dados (escolher conforme implementação).
+* **MariaDB** – Base de dados para armazenamento dos dados.
 * **Git & GitHub** – Controle de versão e gestão do repositório.
 
 ---
 
-## Estrutura do Projeto (exemplo)
+## Estrutura do Projeto
 
 ```
 /leavelyNodeJS
@@ -57,40 +57,10 @@ Leavely é uma aplicação de gestão interna de utilizadores e férias para emp
 │   ├── departments.js
 │   └── leaveTypes.js
 ├── controllers/
-├── models/
-└── README.md v 
+├── middlewares/
+├── migrations/
+└── README.md 
 ```
-
----
-
-## Como Executar
-
-1. Clonar o repositório:
-
-```bash
-git clone https://github.com/teu-usuario/leavelyNodeJS.git
-```
-
-2. Instalar dependências:
-
-```bash
-npm install
-```
-
-3. Iniciar servidor:
-
-```bash
-npm run dev
-```
-
-4. Aceder à API ou aplicação conforme rotas definidas.
-
----
-
-## Contribuição
-
-Pull requests são bem-vindos. Para alterações significativas, abrir um *issue* primeiro para discutir as mudanças.
-
 ---
 
 ## Licença
